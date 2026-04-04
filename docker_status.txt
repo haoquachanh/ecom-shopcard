@@ -1,0 +1,6 @@
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                    PORTS                                         NAMES
+de9a5980c02e   ecom-shopcard-frontend   "docker-entrypoint.s…"   14 seconds ago   Up 6 seconds              0.0.0.0:5173->5173/tcp, [::]:5173->5173/tcp   shopcard-frontend
+76ff04b469d1   ecom-shopcard-backend    "docker-entrypoint.s…"   17 seconds ago   Up 6 seconds              0.0.0.0:3001->3001/tcp, [::]:3001->3001/tcp   shopcard-backend
+3960cb353a7f   postgres:15-alpine       "docker-entrypoint.s…"   18 seconds ago   Up 12 seconds (healthy)   0.0.0.0:5439->5432/tcp, [::]:5439->5432/tcp   shopcard-postgres
+6af51c99001d   postgres:15-alpine       "docker-entrypoint.s…"   17 hours ago     Up 2 hours                0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp   ecom-3d-postgres
+005786067f7a   hello-world              "/hello"                 17 hours ago     Exited (0) 17 hours ago                                                 charming_black
