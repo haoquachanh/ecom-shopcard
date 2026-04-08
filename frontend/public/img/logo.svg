@@ -1,0 +1,41 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(170 150) rotate(42) scale(420 410)">
+      <stop offset="0" stop-color="#ff5a7a"/>
+      <stop offset="0.55" stop-color="#ff1f47"/>
+      <stop offset="1" stop-color="#d70f3b"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="112" y1="102" x2="392" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffd9df"/>
+      <stop offset="1" stop-color="#fff2f5"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="248" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="236" stroke="url(#ring)" stroke-width="10"/>
+  <circle cx="256" cy="256" r="222" stroke="#ffcad6" stroke-opacity="0.95" stroke-width="8"/>
+
+  <g opacity="0.85">
+    <path d="M209 156c15-34 61-45 92-24 12 8 22 21 27 36-25-10-55-7-78 8-15 10-27 25-33 43-11-18-16-42-8-63Z" fill="#ffd7e1"/>
+    <path d="M294 149c18 2 34 13 43 30 9 18 10 40 3 59-8 21-22 34-40 45-17 10-36 18-53 30-12 9-22 21-29 35-1-30 11-58 30-80 15-18 35-32 52-49 11-12 13-33 0-50-3-4-6-8-6-8Z" fill="#ffeff3"/>
+    <circle cx="229" cy="165" r="18" fill="#fff3f6"/>
+    <circle cx="301" cy="220" r="14" fill="#fff3f6"/>
+  </g>
+
+  <g opacity="0.9" fill="#ffe8ee">
+    <path d="M106 178l12 26 28 4-20 20 5 29-25-13-25 13 5-29-20-20 28-4 12-26Z"/>
+    <path d="M400 178l11 24 26 4-19 18 5 27-23-12-24 12 4-27-19-18 26-4 13-24Z"/>
+    <path d="M126 360l11 24 26 4-19 18 5 27-23-12-24 12 4-27-19-18 26-4 13-24Z"/>
+    <path d="M389 351l10 22 24 4-17 17 4 24-21-11-21 11 4-24-17-17 24-4 10-22Z"/>
+  </g>
+
+  <g opacity="0.9" fill="#ffd55f">
+    <circle cx="150" cy="243" r="4"/>
+    <circle cx="162" cy="254" r="3"/>
+    <circle cx="350" cy="240" r="4"/>
+    <circle cx="339" cy="252" r="3"/>
+    <circle cx="250" cy="360" r="4"/>
+    <circle cx="263" cy="372" r="3"/>
+  </g>
+
+  <text x="256" y="340" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-style="italic" fill="#ffffff" letter-spacing="1">Lenti Lab</text>
+</svg>
