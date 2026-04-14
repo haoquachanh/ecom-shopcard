@@ -1,0 +1,232 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { samplesApi } from '@/api/products.api';
+import { SEOHead } from '@/components/common/SEOHead';
+import { SampleCard } from '@/components/product/SampleCard';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  SHOP_HOTLINE_HREF,
+  SHOP_PROMISES,
+  SHOP_SERVICE_LINE,
+  SHOP_SHORT_NAME,
+  SHOP_TAGLINE,
+  SHOP_ZALO_HREF,
+} from '@/lib/site';
+import {
+  ArrowRight,
+  BadgeCheck,
+  Eye,
+  Layers3,
+  MessageCircle,
+  PackageCheck,
+  Palette,
+  PhoneCall,
+  ScanLine,
+  Sparkles,
+  Wand2,
+} from 'lucide-react';
+
+const effects = [
+  { label: 'Flip', text: 'Đổi hình theo góc nhìn', color: 'bg-primary' },
+  { label: 'Depth', text: 'Tạo chiều sâu nhiều lớp', color: 'bg-[#8b5cf6]' },
+  { label: 'Motion', text: 'Gợi chuyển động ảo', color: 'bg-[#fb923c]' },
+];
+
+const useCases = [
+  { title: 'Quà tặng thương hiệu', text: 'Một mẫu nhỏ nhưng tạo cảm giác có chiều sâu, dễ nhớ và dễ chia sẻ.', icon: PackageCheck },
+  { title: 'POSM & trưng bày', text: 'Tăng độ hút mắt tại quầy, booth, showroom bằng hiệu ứng nhìn nghiêng.', icon: ScanLine },
+  { title: 'Bộ sưu tập cá nhân', text: 'Biến nhân vật, khoảnh khắc hoặc artwork thành vật phẩm nhiều lớp.', icon: Wand2 },
+];
+
+const processSteps = [
+  { title: 'Chọn hướng nhìn', text: 'Xác định hiệu ứng flip, depth hoặc motion phù hợp với nội dung.' },
+  { title: 'Dựng lớp hình', text: 'Tách layer, kiểm tra bố cục và tối ưu file để hiệu ứng rõ hơn.' },
+  { title: 'Hoàn thiện mẫu', text: 'Chốt kích thước, chất liệu và phiên bản tham khảo trước khi sản xuất.' },
+];
+
+export default function Home() {
+  const { data: samples = [] } = useQuery({
+    queryKey: ['samples', 'home-preview'],
+    queryFn: () => samplesApi.getAll(),
+  });
+
+  const featuredSamples = samples.slice(0, 4);
+
+  return (
+    <>
+      <SEOHead
+        title="Home"
+        description="Lenti Lab thiết kế và sản xuất ảnh nổi 3D Lenticular cho quà tặng, POSM, trưng bày và thương hiệu."
+      />
+
+      <section className="home-creative relative overflow-hidden px-4 pb-14 pt-8 md:pb-20 md:pt-14">
+        <div className="pointer-events-none absolute left-[6%] top-12 h-28 w-28 rounded-[2rem] border border-primary/15 bg-white/80 shadow-[18px_18px_0_rgba(253,20,63,0.08)] rotate-[-10deg]" />
+        <div className="pointer-events-none absolute right-[7%] top-28 h-20 w-20 rounded-full bg-[#8b5cf6]/12 blur-2xl" />
+        <div className="pointer-events-none absolute bottom-12 left-[42%] h-24 w-24 rounded-full bg-[#fb923c]/14 blur-2xl" />
+
+        <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(520px,1fr)] lg:items-center">
+          <div className="relative z-10 space-y-8">
+            <Badge className="w-fit rounded-full border border-primary/15 bg-white px-4 py-2 text-primary shadow-[0_12px_32px_rgba(253,20,63,0.1)] hover:bg-white">
+              <Sparkles className="h-3.5 w-3.5" />
+              {SHOP_SERVICE_LINE}
+            </Badge>
+
+            <div className="space-y-5">
+              <p className="text-xs font-black uppercase tracking-[0.32em] text-primary">{SHOP_SHORT_NAME}</p>
+              <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-[#9f1239] md:text-7xl">
+                Ảnh nổi 3D, nhìn nghiêng là thấy chuyển động.
+              </h1>
+              <p className="max-w-2xl text-base leading-7 text-[#7f1d3a] md:text-lg">
+                {SHOP_TAGLINE}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Button size="lg" className="rounded-xl bg-primary text-white shadow-[0_18px_38px_rgba(253,20,63,0.24)] hover:bg-primary/90" asChild>
+                <Link to="/products">
+                  Khám phá sản phẩm
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-xl border-primary/20 bg-white text-primary shadow-sm hover:bg-primary/5"
+                asChild
+              >
+                <a href={SHOP_ZALO_HREF}>
+                  <MessageCircle className="h-4 w-4" />
+                  Tư vấn ý tưởng
+                </a>
+              </Button>
+            </div>
+
+            <div className="grid max-w-2xl gap-3 sm:grid-cols-3">
+              {effects.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-primary/10 bg-white/85 p-4 shadow-[0_18px_44px_rgba(253,20,63,0.08)] backdrop-blur">
+                  <span className={`block h-2 w-10 rounded-full ${item.color}`} />
+                  <p className="mt-4 text-2xl font-black text-[#be123c]">{item.label}</p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-[#9f1239]/70">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative z-0 min-h-[460px] overflow-hidden rounded-[2rem] px-4 py-8 sm:min-h-[540px] lg:min-h-[620px]" aria-label="Minh họa hiệu ứng lenticular dạng 2D nhiều lớp">
+            <div className="home-tilt-card relative mx-auto w-full max-w-[460px] rounded-[2rem] border border-primary/12 bg-white p-5 shadow-[0_34px_90px_rgba(253,20,63,0.18)] sm:max-w-[500px]">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-[linear-gradient(135deg,#fff1f4,#ffffff_38%,#fff7ed_70%,#f5f3ff)]">
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,rgba(253,20,63,0.12)_0_1px,transparent_1px_12px)]" />
+                <div className="home-float-slow absolute left-6 top-7 h-24 w-24 rounded-[1.5rem] bg-primary/88 shadow-[12px_12px_0_rgba(251,146,60,0.22)] sm:h-32 sm:w-32 sm:rounded-[2rem]" />
+                <div className="home-float absolute right-6 top-20 h-20 w-20 rounded-full bg-[#8b5cf6]/78 shadow-[10px_10px_0_rgba(253,20,63,0.1)] sm:h-24 sm:w-24" />
+                <div className="home-float-slower absolute bottom-16 left-7 h-24 w-36 rounded-[1.5rem] bg-[#fb923c]/84 shadow-[12px_12px_0_rgba(139,92,246,0.14)] sm:h-28 sm:w-44" />
+                <div className="absolute bottom-7 right-6 rounded-full bg-white/88 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-primary shadow-lg">
+                  2D Layered 3D
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute left-3 top-24 hidden w-40 rounded-3xl border border-primary/10 bg-white/94 p-4 shadow-[14px_14px_0_rgba(253,20,63,0.08)] backdrop-blur xl:block">
+              <Eye className="h-6 w-6 text-primary" />
+              <p className="mt-5 text-base font-black text-[#be123c]">Góc nhìn đổi cảm giác.</p>
+            </div>
+
+            <div className="absolute bottom-24 right-4 hidden w-44 rounded-3xl border border-[#8b5cf6]/15 bg-white/94 p-4 shadow-[14px_14px_0_rgba(139,92,246,0.12)] backdrop-blur xl:block">
+              <Layers3 className="h-6 w-6 text-[#8b5cf6]" />
+              <p className="mt-5 text-base font-black text-[#6d28d9]">Layer tạo chiều sâu.</p>
+            </div>
+
+            <div className="absolute bottom-7 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#fb923c]/20 bg-white px-4 py-3 shadow-[0_20px_44px_rgba(251,146,60,0.16)]">
+              <Palette className="h-5 w-5 text-[#fb923c]" />
+              <span className="text-sm font-black text-[#c2410c]">Red / Orange / Purple</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-10 md:py-14">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-4 md:grid-cols-3">
+            {useCases.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="group rounded-[2rem] border border-primary/10 bg-white p-6 shadow-[0_18px_50px_rgba(253,20,63,0.08)] transition-colors duration-200 hover:border-primary/30 hover:bg-primary/4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h2 className="mt-6 text-xl font-black text-[#be123c]">{item.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-[#7f1d3a]">{item.text}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-10 md:py-16">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+          <div className="rounded-[2rem] bg-primary px-6 py-8 text-white shadow-[0_28px_70px_rgba(253,20,63,0.22)] md:p-8">
+            <Badge className="rounded-full bg-white/16 px-3 py-1.5 text-white hover:bg-white/16">
+              Quy trình
+            </Badge>
+            <h2 className="mt-5 text-3xl font-black tracking-normal md:text-5xl">Từ ảnh phẳng đến mẫu có chiều sâu.</h2>
+            <p className="mt-4 text-base leading-7 text-white/86">Mỗi bước đều giúp hiệu ứng dễ nhìn hơn khi chuyển góc.</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {processSteps.map((step, index) => (
+              <div key={step.title} className="rounded-[2rem] border border-primary/10 bg-white p-6 shadow-[0_18px_50px_rgba(253,20,63,0.08)]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#fff1f4] text-sm font-black text-primary">
+                  {index + 1}
+                </div>
+                <h3 className="mt-6 text-lg font-black text-[#be123c]">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[#7f1d3a]">{step.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {featuredSamples.length > 0 && (
+        <section className="px-4 py-10 md:py-16">
+          <div className="mx-auto max-w-7xl space-y-6">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <Badge className="rounded-full bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/10">
+                  Mẫu nổi bật
+                </Badge>
+                <h2 className="mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Một vài mẫu để bắt đầu.</h2>
+              </div>
+              <Button variant="outline" className="rounded-xl border-primary/20 bg-white text-primary hover:bg-primary/5" asChild>
+                <Link to="/products">
+                  Xem toàn bộ sản phẩm
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              {featuredSamples.map((sample) => (
+                <SampleCard key={sample.id} sample={sample} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="px-4 py-10 md:py-16">
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+          {SHOP_PROMISES.map((promise, index) => (
+            <div key={promise.title} className="rounded-[2rem] border border-primary/10 bg-white p-6 shadow-[0_18px_50px_rgba(253,20,63,0.06)]">
+              <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${index === 1 ? 'bg-[#8b5cf6]/10 text-[#8b5cf6]' : index === 2 ? 'bg-[#fb923c]/12 text-[#fb923c]' : 'bg-primary/10 text-primary'}`}>
+                <BadgeCheck className="h-5 w-5" />
+              </div>
+              <h3 className="mt-5 text-lg font-black text-[#be123c]">{promise.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-[#7f1d3a]">{promise.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
