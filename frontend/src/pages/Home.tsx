@@ -34,6 +34,18 @@ const effects = [
   { label: 'Motion', text: 'Gợi chuyển động ảo', color: 'bg-[#fb923c]' },
 ];
 
+const salesSignals = [
+  { value: '3 hiệu ứng', label: 'Flip / Depth / Motion' },
+  { value: '1:1', label: 'Tư vấn theo nội dung ảnh' },
+  { value: 'Toàn quốc', label: 'Hỗ trợ gửi mẫu và giao nhận' },
+];
+
+const conversionReasons = [
+  { title: 'Dễ hình dung trước khi làm', text: 'Xem mẫu có sẵn để chọn hiệu ứng gần nhất với nhu cầu.', icon: Eye },
+  { title: 'Phù hợp chiến dịch nhỏ và lớn', text: 'Có thể bắt đầu từ mẫu quà tặng, POSM hoặc bộ sưu tập.', icon: PackageCheck },
+  { title: 'Tư vấn nhanh qua Zalo', text: 'Gửi ảnh, ý tưởng và kích thước để được gợi ý hướng làm.', icon: MessageCircle },
+];
+
 const useCases = [
   { title: 'Quà tặng thương hiệu', text: 'Một mẫu nhỏ nhưng tạo cảm giác có chiều sâu, dễ nhớ và dễ chia sẻ.', icon: PackageCheck },
   { title: 'POSM & trưng bày', text: 'Tăng độ hút mắt tại quầy, booth, showroom bằng hiệu ứng nhìn nghiêng.', icon: ScanLine },
@@ -57,8 +69,8 @@ export default function Home() {
   return (
     <>
       <SEOHead
-        title="Home"
-        description="Lenti Lab thiết kế và sản xuất ảnh nổi 3D Lenticular cho quà tặng, POSM, trưng bày và thương hiệu."
+        title="Ảnh nổi 3D Lenticular"
+        description="Lenti Lab thiết kế và sản xuất ảnh nổi 3D Lenticular cho quà tặng, POSM, trưng bày và thương hiệu. Xem mẫu và tư vấn nhanh qua Zalo."
       />
 
       <section className="home-creative relative overflow-hidden px-4 pb-14 pt-8 md:pb-20 md:pt-14">
@@ -101,6 +113,26 @@ export default function Home() {
                   Tư vấn ý tưởng
                 </a>
               </Button>
+              <Button
+                size="lg"
+                variant="ghost"
+                className="rounded-xl bg-white/80 text-[#be123c] shadow-sm hover:bg-white hover:text-primary"
+                asChild
+              >
+                <a href={SHOP_HOTLINE_HREF}>
+                  <PhoneCall className="h-4 w-4" />
+                  Gọi tư vấn nhanh
+                </a>
+              </Button>
+            </div>
+
+            <div className="grid max-w-2xl gap-3 sm:grid-cols-3">
+              {salesSignals.map((item) => (
+                <div key={item.value} className="rounded-2xl border border-primary/10 bg-white/75 px-4 py-3 shadow-[0_14px_34px_rgba(253,20,63,0.07)] backdrop-blur">
+                  <p className="text-xl font-black text-[#be123c]">{item.value}</p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-[#7f1d3a]/65">{item.label}</p>
+                </div>
+              ))}
             </div>
 
             <div className="grid max-w-2xl gap-3 sm:grid-cols-3">
@@ -142,6 +174,23 @@ export default function Home() {
               <span className="text-sm font-black text-[#c2410c]">Red / Orange / Purple</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-8">
+        <div className="mx-auto grid max-w-7xl gap-4 rounded-[2rem] border border-primary/10 bg-white p-4 shadow-[0_24px_70px_rgba(253,20,63,0.1)] md:grid-cols-3 md:p-5">
+          {conversionReasons.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.title} className={`rounded-[1.5rem] p-5 ${index === 1 ? 'bg-[#f5f3ff]' : index === 2 ? 'bg-[#fff7ed]' : 'bg-[#fff7f9]'}`}>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${index === 1 ? 'bg-[#8b5cf6]/12 text-[#7c3aed]' : index === 2 ? 'bg-[#fb923c]/14 text-[#ea580c]' : 'bg-primary/10 text-primary'}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h2 className="mt-5 text-lg font-black text-[#be123c]">{item.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-[#7f1d3a]/75">{item.text}</p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -225,6 +274,32 @@ export default function Home() {
               <p className="mt-2 text-sm leading-6 text-[#7f1d3a]">{promise.text}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="px-4 pb-16 pt-6 md:pb-20">
+        <div className="mx-auto overflow-hidden rounded-[2rem] bg-gradient-to-r from-primary via-[#ff4d6d] to-[#fb923c] px-6 py-8 text-white shadow-[0_30px_80px_rgba(253,20,63,0.24)] md:px-10 md:py-10 max-w-7xl">
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-white/75">Bắt đầu nhanh</p>
+              <h2 className="mt-3 text-3xl font-black md:text-5xl">Có ảnh hoặc ý tưởng rồi? Gửi để được gợi ý hiệu ứng.</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/86">Chọn mẫu tham khảo hoặc gửi hình qua Zalo, Lenti Lab sẽ tư vấn hướng flip, depth hoặc motion phù hợp.</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild className="rounded-2xl bg-white px-6 text-primary hover:bg-white/92">
+                <a href={SHOP_ZALO_HREF}>
+                  <MessageCircle className="h-4 w-4" />
+                  Tư vấn Zalo
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="rounded-2xl border-white/40 bg-white/10 px-6 text-white hover:bg-white/18">
+                <Link to="/products">
+                  Xem mẫu
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     </>
