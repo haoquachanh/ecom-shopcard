@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Lenti Lab">
+  <defs>
+    <linearGradient id="g" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fd143f"/>
+      <stop offset="0.58" stop-color="#ff4d6d"/>
+      <stop offset="1" stop-color="#fb923c"/>
+    </linearGradient>
+    <linearGradient id="p" x1="14" y1="14" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#fff1f4"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#g)"/>
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#ffffff" stroke-opacity="0.42" stroke-width="2"/>
+  <path d="M18 18h13c9 0 15 5 15 13s-6 13-15 13H18V18Z" fill="url(#p)"/>
+  <path d="M28 22v20M35 24v16M42 29v6" stroke="#fd143f" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="47" cy="17" r="4" fill="#8b5cf6"/>
+  <circle cx="17" cy="48" r="3.5" fill="#ffffff" fill-opacity="0.9"/>
+</svg>
