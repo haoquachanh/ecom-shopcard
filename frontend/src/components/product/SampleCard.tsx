@@ -62,7 +62,7 @@ export function SampleCard({ sample }: SampleCardProps) {
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button asChild className="w-full rounded-2xl bg-primary text-white shadow-[0_12px_26px_rgba(253,20,63,0.18)] hover:bg-primary/90" size="sm">
-          <Link to={`/product-sample/${sample.slug}`}>Xem chi tiết</Link>
+          <Link to={`/product-detail/${sample.slug}`}>Xem chi tiết</Link>
         </Button>
       </CardFooter>
     </Card>

@@ -10,6 +10,7 @@ import Products from '@/pages/Products';
 import PriceList from '@/pages/PriceList';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import Loved from '@/pages/Loved';
+import ProductDetail from '@/pages/ProductDetail';
 import SampleDetail from '@/pages/SampleDetail';
 import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="products" element={<Products />} />
         <Route path="loved" element={<Loved />} />
         <Route path="product-loved" element={<Loved />} />
+        <Route path="product-detail/:slug" element={<ProductDetail />} />
         <Route path="samples/:slug" element={<SampleDetail />} />
         <Route path="product-sample/:slug" element={<SampleDetail />} />
 
