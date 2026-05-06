@@ -29,7 +29,7 @@ export function SampleCard({ sample }: SampleCardProps) {
     <Card className="group flex h-full flex-col overflow-hidden rounded-[1.6rem] border-primary/10 bg-white shadow-[0_18px_44px_rgba(253,20,63,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_64px_rgba(253,20,63,0.14)]">
       <div className="relative aspect-square overflow-hidden bg-primary/5">
         <img
-          src={sample.thumbnailUrl || sample.imageUrl || 'https://placehold.co/300x300/f1f5f9/64748b?text=No+Image'}
+          src={sample.thumbnailUrl || sample.imageUrl || 'https://placehold.co/300x300/f1f5f9/64748b?text=Chua+co+anh'}
           alt={sample.name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"

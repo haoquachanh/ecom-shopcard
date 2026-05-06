@@ -171,7 +171,7 @@ export default function Home() {
 
             <div className="absolute bottom-7 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#fb923c]/20 bg-white px-4 py-3 shadow-[0_20px_44px_rgba(251,146,60,0.16)]">
               <Palette className="h-5 w-5 text-[#fb923c]" />
-              <span className="text-sm font-black text-[#c2410c]">Red / Orange / Purple</span>
+              <span className="text-sm font-black text-[#c2410c]">Đỏ / Cam / Tím</span>
             </div>
           </div>
         </div>

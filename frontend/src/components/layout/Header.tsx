@@ -93,7 +93,7 @@ export function Header() {
               <span className="max-w-28 font-semibold text-[#7f1d3a] text-sm truncate">{user?.fullName || user?.email?.split('@')[0]}</span>
               {user?.isAdmin && (
                 <Button variant="ghost" size="icon" className="hover:bg-primary/6 rounded-lg w-8 h-8 hover:text-primary" asChild>
-                  <Link to="/admin" aria-label="Admin">
+                  <Link to="/admin" aria-label="Trang quản trị">
                     <Settings className="w-4 h-4" />
                   </Link>
                 </Button>

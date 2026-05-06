@@ -4,10 +4,10 @@ import { Sparkles } from 'lucide-react';
 import { HolographicCard, type HolographicCardItem } from './HolographicCard';
 
 const holoCards: HolographicCardItem[] = [
-  { title: 'Holographic card 00', imageUrl: '/img/card00.jpg' },
-  { title: 'Holographic card 01', imageUrl: '/img/card01.jpg' },
-  { title: 'Holographic card 02', imageUrl: '/img/card02.jpg' },
-  { title: 'Holographic card 03', imageUrl: '/img/card03.jpg' },
+  { title: 'Thẻ hologram mẫu 00', imageUrl: '/img/card00.jpg' },
+  { title: 'Thẻ hologram mẫu 01', imageUrl: '/img/card01.jpg' },
+  { title: 'Thẻ hologram mẫu 02', imageUrl: '/img/card02.jpg' },
+  { title: 'Thẻ hologram mẫu 03', imageUrl: '/img/card03.jpg' },
 ];
 
 const effects = ['glitter', 'sparkle', 'glitter', 'clean'] as const;
@@ -20,9 +20,9 @@ export function HolographicSection() {
           <div>
             <Badge className="rounded-full bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/10">
               <Sparkles className="h-3.5 w-3.5" />
-              Holographic showcase
+              Bộ sưu tập hologram
             </Badge>
-            <h2 className="mt-4 text-3xl font-black text-[#9f1239] md:text-5xl">Hiệu ứng foil cao cấp.</h2>
+            <h2 className="mt-4 text-3xl font-black text-[#9f1239] md:text-5xl">Hiệu ứng phủ ánh cao cấp.</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#7f1d3a]/78">
               Rê chuột lên từng card để xem ánh hologram, kim tuyến và vệt sáng phản hồi theo góc nhìn.
             </p>

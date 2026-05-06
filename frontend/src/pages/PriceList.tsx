@@ -79,7 +79,7 @@ export default function PriceList() {
               <div className="relative">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.32em] text-primary">Estimate</p>
+                    <p className="text-xs font-black uppercase tracking-[0.32em] text-primary">Ước tính</p>
                     <h2 className="mt-2 text-2xl font-black text-[#9f1239]">Khung báo giá</h2>
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">

@@ -62,7 +62,7 @@ export function MainLayout() {
 
             <div>
               <p className="font-black text-[#9f1239]">Khám phá</p>
-              <nav className="mt-4 grid gap-3 text-sm" aria-label="Footer navigation">
+              <nav className="mt-4 grid gap-3 text-sm" aria-label="Điều hướng chân trang">
                 {[
                   { to: '/', label: 'Trang chủ' },
                   { to: '/products', label: 'Sản phẩm' },
