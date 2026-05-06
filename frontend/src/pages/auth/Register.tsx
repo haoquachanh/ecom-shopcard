@@ -60,7 +60,7 @@ export default function Register() {
               <div className="absolute bottom-2 left-32 h-24 w-56 rounded-[1.5rem] bg-[#fb923c]/90 shadow-[16px_18px_0_rgba(251,146,60,0.16)]" />
               <div className="absolute left-24 top-24 rounded-2xl border border-primary/10 bg-white px-5 py-4 shadow-[0_18px_44px_rgba(253,20,63,0.14)]">
                 <Layers3 className="h-5 w-5 text-primary" />
-                <p className="mt-2 text-sm font-black text-[#be123c]">Layer profile</p>
+                <p className="mt-2 text-sm font-black text-[#be123c]">Hồ sơ nhiều lớp</p>
                 <p className="text-xs text-[#7f1d3a]/65">Lưu gu thiết kế của bạn.</p>
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function Register() {
                 <Field label="Họ và tên" htmlFor="fullName" icon={<User className="h-4 w-4" />}>
                   <Input
                     id="fullName"
-                    placeholder="Nguyen Van A"
+                    placeholder="Nguyễn Văn A"
                     className="h-12 rounded-2xl border-primary/15 bg-[#fff7f9] pr-11 text-[#7f1d3a] focus-visible:ring-primary/30"
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
@@ -115,7 +115,7 @@ export default function Register() {
                 <PasswordField
                   id="password"
                   label="Mật khẩu"
-                  placeholder="Toi thieu 6 ky tu"
+                  placeholder="Tối thiểu 6 ký tự"
                   value={form.password}
                   showPassword={showPassword}
                   onToggle={() => setShowPassword((s) => !s)}
@@ -124,7 +124,7 @@ export default function Register() {
                 <PasswordField
                   id="confirm"
                   label="Xác nhận mật khẩu"
-                  placeholder="Nhap lai mat khau"
+                  placeholder="Nhập lại mật khẩu"
                   value={confirm}
                   showPassword={showPassword}
                   onToggle={() => setShowPassword((s) => !s)}

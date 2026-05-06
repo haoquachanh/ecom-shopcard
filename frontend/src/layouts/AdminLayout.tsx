@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
+  { to: '/admin', icon: LayoutDashboard, label: 'Bảng điều khiển', end: true },
   { to: '/admin/product-types', icon: Package, label: 'Loại sản phẩm' },
   { to: '/admin/samples', icon: Tag, label: 'Mẫu thiết kế' },
   { to: '/admin/price-grids', icon: Tag, label: 'Bảng giá' },
@@ -27,7 +27,7 @@ export function AdminLayout() {
       {/* Sidebar */}
       <aside className="hidden md:flex w-60 flex-col border-r bg-background">
         <div className="p-6 border-b">
-          <h1 className="text-lg font-bold text-gradient">ShopCard Admin</h1>
+          <h1 className="text-lg font-bold text-gradient">Quản trị ShopCard</h1>
           <p className="text-xs text-muted-foreground mt-1">{user?.email}</p>
         </div>
         <nav className="flex-1 p-4 space-y-1">
@@ -51,7 +51,7 @@ export function AdminLayout() {
       {/* Main */}
       <div className="flex-1 flex flex-col min-h-screen">
         <header className="h-14 border-b bg-background flex items-center px-6 md:hidden">
-          <h1 className="font-bold">ShopCard Admin</h1>
+          <h1 className="font-bold">Quản trị ShopCard</h1>
         </header>
         <main className="flex-1 p-6 overflow-auto">
           <Outlet />

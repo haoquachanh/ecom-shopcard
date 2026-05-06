@@ -115,7 +115,7 @@ export default function Login() {
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Nhap mat khau"
+                    placeholder="Nhập mật khẩu"
                     required
                     className="h-12 rounded-2xl border-primary/15 bg-[#fff7f9] pr-11 text-[#7f1d3a] focus-visible:ring-primary/30"
                     value={form.password}

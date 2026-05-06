@@ -49,7 +49,7 @@ export default function AdminUsers() {
                     <TableCell>{u.phone || '–'}</TableCell>
                     <TableCell>
                       <Badge variant={u.isAdmin ? 'default' : 'secondary'}>
-                        {u.isAdmin ? 'Admin' : 'Người dùng'}
+                        {u.isAdmin ? 'Quản trị viên' : 'Người dùng'}
                       </Badge>
                     </TableCell>
                     <TableCell>

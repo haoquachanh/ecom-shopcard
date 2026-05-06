@@ -18,9 +18,9 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <SEOHead title="Admin Dashboard" noindex />
+      <SEOHead title="Bảng điều khiển quản trị" noindex />
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Bảng điều khiển</h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {stats.map((s) => (
             <Card key={s.label}>

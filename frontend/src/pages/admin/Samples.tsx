@@ -153,7 +153,7 @@ export default function AdminSamples() {
                 <TableHead className="w-16">Ảnh</TableHead>
                 <TableHead>Tên mẫu</TableHead>
                 <TableHead>Loại sản phẩm</TableHead>
-                <TableHead>Tags</TableHead>
+                <TableHead>Thẻ</TableHead>
                 <TableHead>Trạng thái</TableHead>
                 <TableHead className="text-right">Thao tác</TableHead>
               </TableRow>
@@ -286,7 +286,7 @@ export default function AdminSamples() {
             </div>
 
             <div className="space-y-1.5">
-              <Label>Image URL (Ảnh gốc / Ảnh lớn)</Label>
+              <Label>URL ảnh lớn</Label>
               <Input
                 value={form.imageUrl}
                 onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
@@ -295,7 +295,7 @@ export default function AdminSamples() {
             </div>
 
             <div className="space-y-1.5">
-              <Label>Thumbnail URL (Ảnh nhỏ)</Label>
+              <Label>URL ảnh thu nhỏ</Label>
               <Input
                 value={form.thumbnailUrl}
                 onChange={(e) => setForm({ ...form, thumbnailUrl: e.target.value })}
@@ -304,11 +304,11 @@ export default function AdminSamples() {
             </div>
 
             <div className="space-y-1.5">
-              <Label>Tags (ngăn cách bằng dấu phẩy)</Label>
+              <Label>Thẻ mô tả (ngăn cách bằng dấu phẩy)</Label>
               <Input
                 value={form.tagsString}
                 onChange={(e) => setForm({ ...form, tagsString: e.target.value })}
-                placeholder="anime, genshin, cute"
+                placeholder="anime, genshin, dễ thương"
               />
             </div>
 

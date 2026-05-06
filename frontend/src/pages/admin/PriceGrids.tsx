@@ -73,7 +73,7 @@ export default function AdminPriceGrids() {
           <div className="rounded-xl border bg-card">
             <Table>
               <TableHeader>
-                <TableRow><TableHead>Tier</TableHead><TableHead>Chất liệu</TableHead><TableHead>Số hàng giá</TableHead><TableHead className="text-right">Thao tác</TableHead></TableRow>
+                <TableRow><TableHead>Nhóm giá</TableHead><TableHead>Chất liệu</TableHead><TableHead>Số hàng giá</TableHead><TableHead className="text-right">Thao tác</TableHead></TableRow>
               </TableHeader>
               <TableBody>
                 {grids.map((g: any) => {
@@ -102,9 +102,9 @@ export default function AdminPriceGrids() {
           <div className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label>Price Tier</Label>
+                <Label>Nhóm giá</Label>
                 <Select value={gridForm.priceTierId} onValueChange={(v) => setGridForm({ ...gridForm, priceTierId: v })}>
-                  <SelectTrigger><SelectValue placeholder="Chọn tier" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Chọn nhóm giá" /></SelectTrigger>
                   <SelectContent>{tiers.map((t: any) => <SelectItem key={t.id} value={String(t.id)}>{t.displayName}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
@@ -114,9 +114,9 @@ export default function AdminPriceGrids() {
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label>Grid Data (JSON)</Label>
+              <Label>Dữ liệu bảng giá (JSON)</Label>
               <Textarea value={gridForm.gridDataRaw} onChange={(e) => setGridForm({ ...gridForm, gridDataRaw: e.target.value })} rows={12} className="font-mono text-xs" />
-              <p className="text-xs text-muted-foreground">Format: {"{ rows: [{ quantity: '20', values: { '5cm': 6000 } }] }"}</p>
+              <p className="text-xs text-muted-foreground">Định dạng: {"{ rows: [{ quantity: '20', values: { '5cm': 6000 } }] }"}</p>
             </div>
           </div>
           <DialogFooter>
