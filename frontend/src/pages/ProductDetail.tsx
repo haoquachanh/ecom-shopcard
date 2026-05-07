@@ -24,13 +24,17 @@ export default function ProductDetail() {
     [slug],
   );
 
-  const { data: remoteSample, isLoading } = useQuery({
+  const { data: remoteSamples = [], isLoading } = useQuery({
     queryKey: ['product-detail', slug],
-    queryFn: () => samplesApi.getBySlug(slug!),
+    queryFn: () => samplesApi.getAll(),
     enabled: !!slug && !fallbackSample,
     retry: false,
   });
 
+  const remoteSample = useMemo(
+    () => remoteSamples.find((item) => item.slug === slug),
+    [remoteSamples, slug],
+  );
   const sample = remoteSample || fallbackSample;
   const gallery = [
     sample?.imageUrl,
@@ -40,13 +44,13 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-10">
-        <div className="grid gap-8 lg:grid-cols-2">
-          <Skeleton className="aspect-square rounded-[2rem]" />
+      <div className="mx-auto px-4 py-10 container">
+        <div className="gap-8 grid lg:grid-cols-2">
+          <Skeleton className="rounded-[2rem] aspect-square" />
           <div className="space-y-4">
-            <Skeleton className="h-8 w-2/3 rounded-full" />
-            <Skeleton className="h-16 w-full rounded-2xl" />
-            <Skeleton className="h-36 w-full rounded-[2rem]" />
+            <Skeleton className="rounded-full w-2/3 h-8" />
+            <Skeleton className="rounded-2xl w-full h-16" />
+            <Skeleton className="rounded-[2rem] w-full h-36" />
           </div>
         </div>
       </div>
@@ -56,10 +60,10 @@ export default function ProductDetail() {
   if (!sample) {
     return (
       <section className="px-4 py-20">
-        <div className="container mx-auto rounded-[2rem] border border-primary/10 bg-white p-10 text-center shadow-[0_24px_70px_rgba(253,20,63,0.08)]">
-          <Layers3 className="mx-auto h-10 w-10 text-primary" />
-          <h1 className="mt-4 text-2xl font-black text-[#9f1239]">Không tìm thấy sản phẩm</h1>
-          <Button asChild className="mt-6 rounded-2xl bg-primary text-white hover:bg-primary/90">
+        <div className="bg-white shadow-[0_24px_70px_rgba(253,20,63,0.08)] mx-auto p-10 border border-primary/10 rounded-[2rem] text-center container">
+          <Layers3 className="mx-auto w-10 h-10 text-primary" />
+          <h1 className="mt-4 font-black text-[#9f1239] text-2xl">Không tìm thấy sản phẩm</h1>
+          <Button asChild className="bg-primary hover:bg-primary/90 mt-6 rounded-2xl text-white">
             <Link to="/products">Quay lại sản phẩm</Link>
           </Button>
         </div>
@@ -71,33 +75,33 @@ export default function ProductDetail() {
     <>
       <SEOHead title={sample.name} description={sample.description || 'Chi tiết mẫu ảnh nổi 3D Lenticular tại Lenti Lab.'} />
 
-      <section className="home-creative relative overflow-hidden px-4 py-10 md:py-14">
-        <div className="pointer-events-none absolute right-[8%] top-20 h-28 w-28 rounded-full bg-[#8b5cf6]/14 blur-2xl" />
-        <div className="pointer-events-none absolute bottom-16 left-[12%] h-28 w-28 rounded-full bg-[#fb923c]/16 blur-2xl" />
+      <section className="relative px-4 py-10 md:py-14 overflow-hidden home-creative">
+        <div className="top-20 right-[8%] absolute bg-[#8b5cf6]/14 blur-2xl rounded-full w-28 h-28 pointer-events-none" />
+        <div className="bottom-16 left-[12%] absolute bg-[#fb923c]/16 blur-2xl rounded-full w-28 h-28 pointer-events-none" />
 
-        <div className="container relative mx-auto">
-          <Button asChild variant="ghost" className="mb-6 rounded-2xl text-[#7f1d3a] hover:bg-primary/5 hover:text-primary">
+        <div className="relative mx-auto container">
+          <Button asChild variant="ghost" className="hover:bg-primary/5 mb-6 rounded-2xl text-[#7f1d3a] hover:text-primary">
             <Link to="/products">
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="w-4 h-4" />
               Quay lại sản phẩm
             </Link>
           </Button>
 
-          <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
-            <div className="rounded-[2rem] border border-primary/10 bg-white/90 p-4 shadow-[0_30px_90px_rgba(253,20,63,0.12)] backdrop-blur">
-              <div className="relative aspect-square overflow-hidden rounded-[1.5rem] bg-[#fff7f9]">
+          <div className="lg:items-center gap-8 grid lg:grid-cols-[1.02fr_0.98fr]">
+            <div className="bg-white/90 shadow-[0_30px_90px_rgba(253,20,63,0.12)] backdrop-blur p-4 border border-primary/10 rounded-[2rem]">
+              <div className="relative bg-[#fff7f9] rounded-[1.5rem] aspect-square overflow-hidden">
                 <img
                   src={sample.imageUrl || sample.thumbnailUrl || 'https://placehold.co/900x900/fff1f4/fd143f?text=Lenti+Lab'}
                   alt={sample.name}
-                  className="h-full w-full object-cover"
+                  className="w-full h-full object-cover"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(255,255,255,0.28),transparent_26%),linear-gradient(125deg,transparent,rgba(253,20,63,0.08),transparent)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(255,255,255,0.28),transparent_26%),linear-gradient(125deg,transparent,rgba(253,20,63,0.08),transparent)] pointer-events-none" />
               </div>
               {gallery.length > 1 && (
-                <div className="mt-3 grid grid-cols-4 gap-3">
+                <div className="gap-3 grid grid-cols-4 mt-3">
                   {gallery.slice(0, 4).map((image, index) => (
-                    <div key={`${image}-${index}`} className="aspect-square overflow-hidden rounded-2xl border border-primary/10 bg-white">
-                      <img src={image} alt="" className="h-full w-full object-cover" />
+                    <div key={`${image}-${index}`} className="bg-white border border-primary/10 rounded-2xl aspect-square overflow-hidden">
+                      <img src={image} alt="" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
@@ -105,48 +109,48 @@ export default function ProductDetail() {
             </div>
 
             <div>
-              <Badge className="rounded-full bg-primary/10 px-4 py-2 text-primary hover:bg-primary/10">
-                <Sparkles className="h-3.5 w-3.5" />
+              <Badge className="bg-primary/10 hover:bg-primary/10 px-4 py-2 rounded-full text-primary">
+                <Sparkles className="w-3.5 h-3.5" />
                 {sample.productType?.name || 'Lenti Lab'}
               </Badge>
-              <h1 className="mt-5 text-4xl font-black leading-tight text-[#9f1239] md:text-6xl">{sample.name}</h1>
+              <h1 className="mt-5 font-black text-[#9f1239] text-4xl md:text-6xl leading-tight">{sample.name}</h1>
               {sample.description && (
-                <p className="mt-5 max-w-2xl text-base leading-8 text-[#7f1d3a]/78">{sample.description}</p>
+                <p className="mt-5 max-w-2xl text-[#7f1d3a]/78 text-base leading-8">{sample.description}</p>
               )}
               {sample.tags && sample.tags.length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-5">
                   {sample.tags.map((tag) => (
-                    <Badge key={tag} className="rounded-full bg-white px-3 py-1 text-primary shadow-sm hover:bg-white">{tag}</Badge>
+                    <Badge key={tag} className="bg-white hover:bg-white shadow-sm px-3 py-1 rounded-full text-primary">{tag}</Badge>
                   ))}
                 </div>
               )}
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <div className="gap-3 grid sm:grid-cols-3 mt-8">
                 {featureCards.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className="rounded-[1.5rem] border border-primary/10 bg-white/86 p-4 shadow-[0_16px_38px_rgba(253,20,63,0.08)]">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <Icon className="h-5 w-5" />
+                    <div key={item.title} className="bg-white/86 shadow-[0_16px_38px_rgba(253,20,63,0.08)] p-4 border border-primary/10 rounded-[1.5rem]">
+                      <div className="flex justify-center items-center bg-primary/10 rounded-xl w-10 h-10 text-primary">
+                        <Icon className="w-5 h-5" />
                       </div>
-                      <h2 className="mt-4 text-sm font-black text-[#be123c]">{item.title}</h2>
-                      <p className="mt-2 text-xs leading-5 text-[#7f1d3a]/70">{item.text}</p>
+                      <h2 className="mt-4 font-black text-[#be123c] text-sm">{item.title}</h2>
+                      <p className="mt-2 text-[#7f1d3a]/70 text-xs leading-5">{item.text}</p>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="rounded-2xl bg-primary px-7 text-white shadow-[0_18px_38px_rgba(253,20,63,0.24)] hover:bg-primary/90">
+              <div className="flex flex-wrap gap-3 mt-8">
+                <Button asChild size="lg" className="bg-primary hover:bg-primary/90 shadow-[0_18px_38px_rgba(253,20,63,0.24)] px-7 rounded-2xl text-white">
                   <a href={SHOP_ZALO_HREF}>
-                    <MessageCircle className="h-4 w-4" />
+                    <MessageCircle className="w-4 h-4" />
                     Tư vấn mẫu này
                   </a>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="rounded-2xl border-primary/20 bg-white px-7 text-primary hover:bg-primary/5">
-                  <Link to="/bang-gia">
+                <Button asChild size="lg" variant="outline" className="bg-white hover:bg-primary/5 px-7 border-primary/20 rounded-2xl text-primary">
+                  <Link to="/pricing">
                     Xem bảng giá
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
               </div>

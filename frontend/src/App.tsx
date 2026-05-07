@@ -11,7 +11,6 @@ import PriceList from '@/pages/PriceList';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import Loved from '@/pages/Loved';
 import ProductDetail from '@/pages/ProductDetail';
-import SampleDetail from '@/pages/SampleDetail';
 import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 
@@ -27,13 +26,13 @@ export default function App() {
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
-        <Route path="bang-gia" element={<PriceList />} />
+        <Route path="pricing" element={<PriceList />} />
         <Route path="products" element={<Products />} />
         <Route path="loved" element={<Loved />} />
         <Route path="product-loved" element={<Loved />} />
         <Route path="product-detail/:slug" element={<ProductDetail />} />
-        <Route path="samples/:slug" element={<SampleDetail />} />
-        <Route path="product-sample/:slug" element={<SampleDetail />} />
+        <Route path="samples/:slug" element={<ProductDetail />} />
+        <Route path="product-sample/:slug" element={<ProductDetail />} />
 
       </Route>
 
