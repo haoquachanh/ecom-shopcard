@@ -9,7 +9,7 @@ export const productTypesApi = {
 
 export const samplesApi = {
   getAll: (productTypeId?: number) =>
-    apiClient.get<Sample[]>('/samples', { params: productTypeId ? { productTypeId } : {} }).then(r => r.data),
+    apiClient.get<Sample[]>('/samples', { params: productTypeId ? { product_type_id: productTypeId } : {} }).then(r => r.data),
   getBySlug: (slug: string) => apiClient.get<Sample>(`/samples/slug/${slug}`).then(r => r.data),
   getOne: (id: number) => apiClient.get<Sample>(`/samples/${id}`).then(r => r.data),
 };

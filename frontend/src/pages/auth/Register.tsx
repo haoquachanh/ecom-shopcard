@@ -21,7 +21,10 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (form.password.length < 6) return setError('Mật khẩu phải có ít nhất 6 ký tự');
+    if (form.password.length < 8) return setError('Mật khẩu phải có ít nhất 8 ký tự');
+    if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password)) {
+      return setError('Mật khẩu cần có cả chữ và số');
+    }
     if (form.password !== confirm) return setError('Mật khẩu và xác nhận không khớp');
     setLoading(true);
     try {
@@ -115,7 +118,7 @@ export default function Register() {
                 <PasswordField
                   id="password"
                   label="Mật khẩu"
-                  placeholder="Tối thiểu 6 ký tự"
+                  placeholder="Tối thiểu 8 ký tự, có chữ và số"
                   value={form.password}
                   showPassword={showPassword}
                   onToggle={() => setShowPassword((s) => !s)}
@@ -134,7 +137,7 @@ export default function Register() {
 
               <div className="flex items-center gap-3 rounded-2xl border border-primary/10 bg-primary/5 px-4 py-3 text-sm text-[#7f1d3a]/75">
                 <ShieldCheck className="h-5 w-5 shrink-0 text-primary" />
-                <span>Mật khẩu tối thiểu 6 ký tự. Không chia sẻ tài khoản với người khác.</span>
+                <span>Mật khẩu tối thiểu 8 ký tự, gồm cả chữ và số. Không chia sẻ tài khoản với người khác.</span>
               </div>
 
               {error && <p className="rounded-2xl border border-destructive/15 bg-destructive/5 px-4 py-3 text-sm text-destructive">{error}</p>}
