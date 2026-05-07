@@ -17,7 +17,7 @@ import {
 const publicNav = [
   { to: '/products', label: 'Sản phẩm', icon: GalleryHorizontalEnd },
   { to: '/loved', label: 'Yêu thích', icon: HeartHandshake },
-  { to: '/bang-gia', label: 'Bảng giá', icon: BadgeDollarSign },
+  { to: '/pricing', label: 'Bảng giá', icon: BadgeDollarSign },
 ];
 
 export function Header() {

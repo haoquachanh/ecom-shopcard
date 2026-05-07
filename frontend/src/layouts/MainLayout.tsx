@@ -66,7 +66,7 @@ export function MainLayout() {
                 {[
                   { to: '/', label: 'Trang chủ' },
                   { to: '/products', label: 'Sản phẩm' },
-                  { to: '/bang-gia', label: 'Bảng giá' },
+                  { to: '/pricing', label: 'Bảng giá' },
                   { to: '/loved', label: 'Yêu thích' },
                 ].map((item) => (
                   <Link key={item.to} to={item.to} className="text-[#7f1d3a] hover:text-primary transition-colors duration-200">
