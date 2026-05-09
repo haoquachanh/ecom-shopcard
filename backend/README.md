@@ -29,7 +29,18 @@ psql -U postgres -d ecom_shopcard -f ../.schema
 npm run start:dev
 ```
 
-5. Build production:
+5. Create/update local admin account:
+```bash
+npm run seed:admin
+```
+
+Default local credentials:
+- Email: `admin@shopcard.local`
+- Password: `Admin123456`
+
+Override with `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env` for shared/staging/production environments.
+
+6. Build production:
 ```bash
 npm run build
 npm run start:prod
