@@ -1,0 +1,19 @@
+{
+  "name": "Lenti Lab - Shop Ảnh nổi 3D Lenticular",
+  "short_name": "Lenti Lab",
+  "description": "Thiết kế và sản xuất ảnh nổi 3D lenticular, standee mica, ảnh flip, ảnh depth, thẻ motion và POSM.",
+  "lang": "vi-VN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#fd143f",
+  "icons": [
+    {
+      "src": "/img/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /loved
+Disallow: /admin
+Disallow: /login
+Disallow: /register

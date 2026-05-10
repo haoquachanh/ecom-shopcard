@@ -10,6 +10,20 @@ export const SHOP_HOTLINE_HREF = 'tel:+84937617695';
 export const SHOP_ALT_HREF = 'tel:+84795957920';
 export const SHOP_EMAIL_HREF = 'mailto:3dlenticularvn@gmail.com';
 export const SHOP_ZALO_HREF = 'https://zalo.me/0937617695';
+export const SHOP_DEFAULT_IMAGE = '/img/logo.jpg';
+export const SHOP_KEYWORDS = [
+  'ảnh nổi 3D',
+  'in lenticular',
+  'lenticular 3D',
+  'standee mica',
+  'ảnh flip',
+  'ảnh depth',
+  'thẻ motion',
+  'POSM lenticular',
+  'quà tặng thương hiệu',
+];
+
+export const SITE_URL = (import.meta.env.VITE_SITE_URL || '').replace(/\/$/, '');
 
 export const SHOP_PROMISES = [
   { title: 'Tư vấn nhanh', text: 'Từ ý tưởng đến lựa chọn mẫu, bạn luôn có người hỗ trợ rõ ràng.' },
