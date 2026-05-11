@@ -30,6 +30,7 @@ export interface ProductType {
   name: string;
   slug: string;
   description?: string;
+  imageUrl?: string;
   pricingConfig: PricingConfig;
   isActive: boolean;
   priceTiers?: PriceTier[];
