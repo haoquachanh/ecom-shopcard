@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SHOP_NAME, SHOP_SHORT_NAME } from '@/lib/site';
 import {
   BadgeDollarSign,
   GalleryHorizontalEnd,
   HeartHandshake,
-  Image,
-  LogOut,
   Menu,
   X,
-  Settings,
 } from 'lucide-react';
 
 const publicNav = [
@@ -21,12 +17,8 @@ const publicNav = [
 ];
 
 export function Header() {
-  const { user, isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleLogout = () => { logout(); navigate('/'); };
 
   const isActive = (to: string) =>
     location.pathname === to || location.pathname.startsWith(`${to}/`);
@@ -85,34 +77,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {isAuthenticated ? (
-            <div className="hidden md:flex items-center gap-2 bg-white shadow-[0_12px_28px_rgba(253,20,63,0.08)] px-2 py-1.5 border border-primary/10 rounded-xl">
-              <div className="flex justify-center items-center bg-primary/10 rounded-lg w-8 h-8 text-primary">
-                <Image className="w-4 h-4" />
-              </div>
-              <span className="max-w-28 font-semibold text-[#7f1d3a] text-sm truncate">{user?.fullName || user?.email?.split('@')[0]}</span>
-              {user?.isAdmin && (
-                <Button variant="ghost" size="icon" className="hover:bg-primary/6 rounded-lg w-8 h-8 hover:text-primary" asChild>
-                  <Link to="/admin" aria-label="Trang quản trị">
-                    <Settings className="w-4 h-4" />
-                  </Link>
-                </Button>
-              )}
-              <Button variant="ghost" size="icon" className="hover:bg-primary/6 rounded-lg w-8 h-8 hover:text-primary" onClick={handleLogout} aria-label="Đăng xuất">
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
-          ) : (
-            <div className="hidden md:flex items-center gap-2">
-              <Button variant="outline" size="sm" className="bg-white hover:bg-primary/5 shadow-sm border-primary/15 hover:border-primary/30 rounded-xl text-[#7f1d3a] hover:text-primary" asChild>
-                <Link to="/login">Đăng nhập</Link>
-              </Button>
-              <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 px-4 border-0 rounded-xl text-white" asChild>
-                <Link to="/register">Đăng ký</Link>
-              </Button>
-            </div>
-          )}
-
           <Button
             variant="ghost"
             size="icon"
@@ -160,26 +124,6 @@ export function Header() {
             })}
             </div>
 
-          <div className="gap-2 grid bg-[#fff7f9] mt-4 p-4 border border-primary/10 rounded-2xl text-sm">
-            {isAuthenticated ? (
-              <>
-                <p className="font-semibold text-[#7f1d3a]">{user?.fullName || user?.email}</p>
-                <button className="flex items-center gap-2 hover:bg-white px-3 py-2 rounded-xl w-full font-semibold text-destructive text-left" onClick={handleLogout}>
-                  <LogOut className="w-4 h-4" />
-                  Đăng xuất
-                </button>
-              </>
-            ) : (
-              <div className="gap-2 grid">
-                <Button variant="outline" className="bg-white hover:bg-primary/5 border-primary/15 hover:border-primary/30 rounded-xl w-full hover:text-primary" asChild>
-                  <Link to="/login">Đăng nhập</Link>
-                </Button>
-                <Button className="bg-primary hover:bg-primary/90 border-0 rounded-xl w-full text-white" asChild>
-                  <Link to="/register">Đăng ký</Link>
-                </Button>
-              </div>
-            )}
-          </div>
           </div>
         </div>
       )}
