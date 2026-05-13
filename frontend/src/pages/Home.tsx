@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { samplesApi } from '@/api/products.api';
 import { SEOHead } from '@/components/common/SEOHead';
 import { SampleCard } from '@/components/product/SampleCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { samplesService } from '@/services/products.service';
 import {
   SHOP_HOTLINE_HREF,
   SHOP_PROMISES,
@@ -61,7 +61,7 @@ const processSteps = [
 export default function Home() {
   const { data: samples = [] } = useQuery({
     queryKey: ['samples', 'home-preview'],
-    queryFn: () => samplesApi.getAll(),
+    queryFn: () => samplesService.getAll(),
   });
 
   const featuredSamples = samples.slice(0, 4);
@@ -69,8 +69,11 @@ export default function Home() {
   return (
     <>
       <SEOHead
-        title="Ảnh nổi 3D Lenticular"
-        description="Lenti Lab thiết kế và sản xuất ảnh nổi 3D Lenticular cho quà tặng, POSM, trưng bày và thương hiệu. Xem mẫu và tư vấn nhanh qua Zalo."
+        title="Ảnh nổi 3D Lenticular, standee mica và POSM thương hiệu"
+        description="Lenti Lab thiết kế và sản xuất ảnh nổi 3D lenticular, standee mica, ảnh flip, ảnh depth, thẻ motion và POSM cho quà tặng thương hiệu."
+        canonicalPath="/"
+        image="/img/logo.jpg"
+        keywords={['in ảnh nổi 3D TPHCM', 'làm standee mica', 'in ảnh lenticular Việt Nam']}
       />
 
       <section className="home-creative relative overflow-hidden px-4 pb-14 pt-8 md:pb-20 md:pt-14">
