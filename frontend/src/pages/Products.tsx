@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { productTypesApi, samplesApi } from '@/api/products.api';
 import { SEOHead } from '@/components/common/SEOHead';
 import { HolographicSection } from '@/components/product/HolographicSection';
 import { SampleCard } from '@/components/product/SampleCard';
@@ -9,8 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { mockProductTypes, mockSamples } from '@/lib/mock-products';
 import { SHOP_HOTLINE, SHOP_HOTLINE_HREF, SHOP_ZALO_HREF } from '@/lib/site';
+import { productTypesService, samplesService } from '@/services/products.service';
 import {
   ArrowRight,
   Filter,
@@ -76,18 +75,19 @@ export default function Products() {
   const [selectedTypeId, setSelectedTypeId] = useState<number | undefined>();
   const [query, setQuery] = useState('');
 
-  const { data: productTypes = [] } = useQuery({
+  const { data: productTypes = [], isError: isProductTypesError } = useQuery({
     queryKey: ['product-types'],
-    queryFn: () => productTypesApi.getAll(),
+    queryFn: () => productTypesService.getAll(),
   });
 
-  const { data: samples = [], isLoading } = useQuery({
+  const { data: samples = [], isLoading, isError: isSamplesError } = useQuery({
     queryKey: ['samples', selectedTypeId],
-    queryFn: () => samplesApi.getAll(selectedTypeId),
+    queryFn: () => samplesService.getAll(selectedTypeId),
   });
 
-  const displayProductTypes = productTypes.length > 0 ? productTypes : mockProductTypes;
-  const displaySamples = samples.length > 0 ? samples : mockSamples;
+  const displayProductTypes = productTypes;
+  const displaySamples = samples;
+  const hasCatalogError = isProductTypesError || isSamplesError;
 
   const filteredSamples = useMemo(() => {
     const keyword = query.trim().toLowerCase();
@@ -111,8 +111,11 @@ export default function Products() {
   return (
     <>
       <SEOHead
-        title="Sản phẩm"
-        description="Danh mục mẫu ảnh nổi 3D Lenticular, bộ lọc nhanh, tìm kiếm sản phẩm và liên hệ tư vấn."
+        title="Mẫu ảnh nổi 3D Lenticular"
+        description="Khám phá mẫu standee mica, ảnh flip, ảnh depth, thẻ motion và POSM lenticular. Lọc theo danh mục, xem chi tiết và liên hệ tư vấn nhanh."
+        canonicalPath="/products"
+        image="/img/card00.jpg"
+        keywords={['mẫu ảnh nổi 3D', 'mẫu lenticular', 'standee mica mẫu', 'POSM 3D']}
       />
 
       <section className="relative px-4 pt-8 md:pt-12 pb-8 md:pb-12 overflow-hidden home-creative">
@@ -298,6 +301,12 @@ export default function Products() {
 
             {isLoading ? (
               <SkeletonGrid />
+            ) : hasCatalogError ? (
+              <div className="bg-white py-20 border border-primary/20 border-dashed rounded-[2rem] text-center">
+                <Layers3 className="mx-auto w-10 h-10 text-primary" />
+                <p className="mt-4 font-black text-[#be123c] text-lg">Chưa tải được dữ liệu</p>
+                <p className="mt-2 text-[#7f1d3a] text-sm">Kiểm tra cấu hình Supabase hoặc RLS policy cho dữ liệu public.</p>
+              </div>
             ) : filteredSamples.length === 0 ? (
               <div className="bg-white py-20 border border-primary/20 border-dashed rounded-[2rem] text-center">
                 <Layers3 className="mx-auto w-10 h-10 text-primary" />
