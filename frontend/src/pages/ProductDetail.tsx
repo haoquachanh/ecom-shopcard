@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { samplesApi } from '@/api/products.api';
 import { SEOHead } from '@/components/common/SEOHead';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { mockSamples } from '@/lib/mock-products';
 import { SHOP_ZALO_HREF } from '@/lib/site';
+import { samplesService } from '@/services/products.service';
 import { ArrowLeft, ArrowRight, BadgeCheck, Layers3, MessageCircle, Palette, Rotate3D, Sparkles } from 'lucide-react';
 
 const featureCards = [
@@ -19,23 +18,13 @@ const featureCards = [
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
 
-  const fallbackSample = useMemo(
-    () => mockSamples.find((sample) => sample.slug === slug),
-    [slug],
-  );
-
-  const { data: remoteSamples = [], isLoading } = useQuery({
+  const { data: sample, isLoading, isError } = useQuery({
     queryKey: ['product-detail', slug],
-    queryFn: () => samplesApi.getAll(),
-    enabled: !!slug && !fallbackSample,
+    queryFn: () => samplesService.getBySlug(slug!),
+    enabled: !!slug,
     retry: false,
   });
 
-  const remoteSample = useMemo(
-    () => remoteSamples.find((item) => item.slug === slug),
-    [remoteSamples, slug],
-  );
-  const sample = remoteSample || fallbackSample;
   const gallery = [
     sample?.imageUrl,
     sample?.thumbnailUrl,
@@ -57,7 +46,7 @@ export default function ProductDetail() {
     );
   }
 
-  if (!sample) {
+  if (isError || !sample) {
     return (
       <section className="px-4 py-20">
         <div className="bg-white shadow-[0_24px_70px_rgba(253,20,63,0.08)] mx-auto p-10 border border-primary/10 rounded-[2rem] text-center container">
@@ -73,7 +62,26 @@ export default function ProductDetail() {
 
   return (
     <>
-      <SEOHead title={sample.name} description={sample.description || 'Chi tiết mẫu ảnh nổi 3D Lenticular tại Lenti Lab.'} />
+      <SEOHead
+        title={`${sample.name} - Mẫu ảnh nổi 3D`}
+        description={sample.description || 'Chi tiết mẫu ảnh nổi 3D lenticular tại Lenti Lab, phù hợp quà tặng, trưng bày và thương hiệu.'}
+        canonicalPath={`/product-detail/${sample.slug}`}
+        image={sample.imageUrl || sample.thumbnailUrl || '/img/logo.jpg'}
+        type="product"
+        keywords={[sample.name, sample.productType?.name || '', ...(sample.tags || [])].filter(Boolean)}
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: sample.name,
+          description: sample.description || 'Mẫu ảnh nổi 3D lenticular tại Lenti Lab.',
+          image: [sample.imageUrl, sample.thumbnailUrl, ...(sample.images?.map((item) => item.imageUrl) || [])].filter(Boolean),
+          category: sample.productType?.name,
+          brand: {
+            '@type': 'Brand',
+            name: 'Lenti Lab',
+          },
+        }}
+      />
 
       <section className="relative px-4 py-10 md:py-14 overflow-hidden home-creative">
         <div className="top-20 right-[8%] absolute bg-[#8b5cf6]/14 blur-2xl rounded-full w-28 h-28 pointer-events-none" />

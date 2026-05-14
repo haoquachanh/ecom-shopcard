@@ -1,77 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { samplesApi, priceGridsApi } from '@/api/products.api';
 import { SEOHead } from '@/components/common/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatVND } from '@/lib/utils';
-import { lookupUnitPrice } from '@/lib/price.utils';
 import { SHOP_ZALO_HREF } from '@/lib/site';
 import { MessageCircle, Minus, Plus } from 'lucide-react';
-import type { PriceTier, ExtraCharge, PriceGrid } from '@/types/product.types';
+import { pricingService, unitPriceForQuantity } from '@/services/pricing.service';
+import { samplesService } from '@/services/products.service';
 
 export default function SampleDetail() {
   const { slug } = useParams<{ slug: string }>();
 
-  const { data: sample, isLoading } = useQuery({
+  const { data: sample, isLoading, isError } = useQuery({
     queryKey: ['sample', slug],
-    queryFn: () => samplesApi.getBySlug(slug!),
+    queryFn: () => samplesService.getBySlug(slug!),
     enabled: !!slug,
+    retry: false,
   });
 
-  const [selectedTierId, setSelectedTierId] = useState<number | undefined>();
-  const [selectedMaterial, setSelectedMaterial] = useState<string | undefined>();
-  const [selectedSize, setSelectedSize] = useState<string | undefined>();
+  const [selectedMaterialId, setSelectedMaterialId] = useState<number | undefined>();
+  const [selectedSizeId, setSelectedSizeId] = useState<number | undefined>();
+  const [selectedSideId, setSelectedSideId] = useState<number | undefined>();
+  const [selectedEffectId, setSelectedEffectId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(20);
-  const [selectedExtraIds, setSelectedExtraIds] = useState<number[]>([]);
 
-  const config = sample?.productType?.pricingConfig;
-  const tiers: PriceTier[] = sample?.productType?.priceTiers ?? [];
+  const { data: priceConfigs = [], isLoading: isPricingLoading, isError: isPricingError } = useQuery({
+    queryKey: ['base-prices', sample?.productTypeId],
+    queryFn: () => pricingService.getBasePrices(sample!.productTypeId),
+    enabled: !!sample?.productTypeId,
+  });
+
+  const options = pricingService.getOptions(priceConfigs);
 
   useEffect(() => {
-    if (tiers.length > 0 && !selectedTierId) {
-      const def = tiers.find((t) => t.isDefault) || tiers[0];
-      setSelectedTierId(def.id);
+    if (options.materials.length > 0 && !selectedMaterialId) {
+      setSelectedMaterialId(options.materials[0].id);
     }
-    if (config?.available_materials?.length && !selectedMaterial) {
-      setSelectedMaterial(config.available_materials[0].code);
+    if (options.sizes.length > 0 && !selectedSizeId) {
+      setSelectedSizeId(options.sizes[0].id);
     }
-    if (config?.available_sizes?.length && !selectedSize) {
-      setSelectedSize(config.available_sizes[0]);
+    if (options.sides.length > 0 && !selectedSideId) {
+      setSelectedSideId(options.sides[0].id);
     }
-  }, [sample]);
+  }, [options.materials, options.sizes, options.sides, selectedMaterialId, selectedSideId, selectedSizeId]);
 
-  const { data: grids = [] } = useQuery({
-    queryKey: ['grids', sample?.productTypeId, selectedTierId],
-    queryFn: () => priceGridsApi.getGrids(sample!.productTypeId, selectedTierId),
-    enabled: !!sample && !!selectedTierId,
-  });
-
-  const { data: extraCharges = [] } = useQuery({
-    queryKey: ['extra-charges'],
-    queryFn: () => priceGridsApi.getExtraCharges(),
-  });
-
-  const activeGrid = grids.find((g: PriceGrid) =>
-    config?.has_materials ? g.materialCode === selectedMaterial : !g.materialCode || g.materialCode === null,
+  const activePrice = pricingService.findConfig(
+    priceConfigs,
+    sample?.productTypeId || 0,
+    selectedMaterialId,
+    selectedSizeId,
+    selectedSideId,
+    selectedEffectId,
   );
 
-  const unitPrice = activeGrid
-    ? lookupUnitPrice(activeGrid.gridData, selectedSize || null, quantity)
-    : 0;
-
-  const extraTotal = extraCharges
-    .filter((c: ExtraCharge) => selectedExtraIds.includes(c.id))
-    .reduce((sum, c: ExtraCharge) => {
-      if (c.chargeType === 'per_item') return sum + c.priceVnd * quantity;
-      if (c.chargeType === 'per_100_items') return sum + c.priceVnd * Math.ceil(quantity / 100);
-      return sum + c.priceVnd;
-    }, 0);
-
-  const subtotal = unitPrice * quantity + extraTotal;
+  const unitPrice = unitPriceForQuantity(activePrice, quantity);
+  const subtotal = unitPrice * quantity;
 
   if (isLoading) return (
     <div className="mx-auto px-4 py-10 container">
@@ -82,11 +69,18 @@ export default function SampleDetail() {
     </div>
   );
 
-  if (!sample) return <div className="mx-auto px-4 py-20 text-center container"><p>Không tìm thấy mẫu</p></div>;
+  if (isError || !sample) return <div className="mx-auto px-4 py-20 text-center container"><p>Không tìm thấy mẫu</p></div>;
 
   return (
     <>
-      <SEOHead title={sample.name} description={sample.description} />
+      <SEOHead
+        title={`${sample.name} - Báo giá mẫu 3D Lenticular`}
+        description={sample.description || 'Chi tiết mẫu và bảng giá tham khảo cho ảnh nổi 3D lenticular.'}
+        canonicalPath={`/samples/${sample.slug}`}
+        image={sample.imageUrl || sample.thumbnailUrl || '/img/logo.jpg'}
+        type="product"
+        noindex
+      />
       <div className="mx-auto px-4 py-8 container">
         <div className="gap-8 lg:gap-12 grid md:grid-cols-2">
           {/* Image */}
@@ -112,31 +106,28 @@ export default function SampleDetail() {
               {sample.description && <p className="mt-3 text-muted-foreground text-sm leading-relaxed">{sample.description}</p>}
             </div>
 
-            {/* Price Tier */}
-            {tiers.length > 1 && (
-              <div>
-                <p className="mb-2 font-medium text-sm">Loại giá</p>
-                <div className="flex flex-wrap gap-2">
-                  {tiers.map((tier) => (
-                    <button key={tier.id}
-                      className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedTierId === tier.id ? 'border-primary bg-primary/10 text-primary font-medium' : 'border-border hover:border-primary/50'}`}
-                      onClick={() => setSelectedTierId(tier.id)}>
-                      {tier.displayName}
-                    </button>
-                  ))}
-                </div>
+            {isPricingLoading && (
+              <div className="space-y-3">
+                <Skeleton className="h-10 w-full rounded-xl" />
+                <Skeleton className="h-10 w-full rounded-xl" />
+              </div>
+            )}
+
+            {isPricingError && (
+              <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm text-destructive">
+                Chưa tải được bảng giá public. Kiểm tra RLS policy cho base_prices và quantity_tiers.
               </div>
             )}
 
             {/* Material */}
-            {config?.has_materials && config.available_materials && (
+            {options.materials.length > 0 && (
               <div>
                 <p className="mb-2 font-medium text-sm">Chất liệu</p>
-                <Select value={selectedMaterial} onValueChange={setSelectedMaterial}>
+                <Select value={selectedMaterialId ? String(selectedMaterialId) : undefined} onValueChange={(value) => setSelectedMaterialId(Number(value))}>
                   <SelectTrigger><SelectValue placeholder="Chọn chất liệu" /></SelectTrigger>
                   <SelectContent>
-                    {config.available_materials.map((m) => (
-                      <SelectItem key={m.code} value={m.code}>{m.label}</SelectItem>
+                    {options.materials.map((material) => (
+                      <SelectItem key={material.id} value={String(material.id)}>{material.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -144,15 +135,51 @@ export default function SampleDetail() {
             )}
 
             {/* Size */}
-            {config?.has_dimensions && config.available_sizes && (
+            {options.sizes.length > 0 && (
               <div>
                 <p className="mb-2 font-medium text-sm">Kích thước</p>
                 <div className="flex flex-wrap gap-2">
-                  {config.available_sizes.map((size) => (
-                    <button key={size}
-                      className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedSize === size ? 'border-primary bg-primary/10 text-primary font-medium' : 'border-border hover:border-primary/50'}`}
-                      onClick={() => setSelectedSize(size)}>
-                      {size}
+                  {options.sizes.map((size) => (
+                    <button key={size.id}
+                      className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedSizeId === size.id ? 'border-primary bg-primary/10 text-primary font-medium' : 'border-border hover:border-primary/50'}`}
+                      onClick={() => setSelectedSizeId(size.id)}>
+                      {size.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {options.sides.length > 1 && (
+              <div>
+                <p className="mb-2 font-medium text-sm">Mặt in</p>
+                <div className="flex flex-wrap gap-2">
+                  {options.sides.map((side) => (
+                    <button key={side.id}
+                      className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedSideId === side.id ? 'border-primary bg-primary/10 text-primary font-medium' : 'border-border hover:border-primary/50'}`}
+                      onClick={() => setSelectedSideId(side.id)}>
+                      {side.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {options.effects.length > 0 && (
+              <div>
+                <p className="mb-2 font-medium text-sm">Hiệu ứng</p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedEffectId === null ? 'border-primary bg-primary/10 text-primary font-medium' : 'border-border hover:border-primary/50'}`}
+                    onClick={() => setSelectedEffectId(null)}
+                  >
+                    Không chọn
+                  </button>
+                  {options.effects.map((effect) => (
+                    <button key={effect.id}
+                      className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${selectedEffectId === effect.id ? 'border-primary bg-primary/10 text-primary font-medium' : 'border-border hover:border-primary/50'}`}
+                      onClick={() => setSelectedEffectId(effect.id)}>
+                      {effect.name}
                     </button>
                   ))}
                 </div>
@@ -171,38 +198,12 @@ export default function SampleDetail() {
               </div>
             </div>
 
-            {/* Extra charges */}
-            {extraCharges.length > 0 && (
-              <div>
-                <p className="mb-2 font-medium text-sm">Dịch vụ thêm</p>
-                <div className="space-y-2">
-                  {extraCharges.map((charge: ExtraCharge) => (
-                    <label key={charge.id} className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" className="border-input rounded"
-                        checked={selectedExtraIds.includes(charge.id)}
-                        onChange={(e) => setSelectedExtraIds(e.target.checked ? [...selectedExtraIds, charge.id] : selectedExtraIds.filter((id) => id !== charge.id))} />
-                      <span className="text-sm">{charge.name}</span>
-                      <span className="ml-auto text-muted-foreground text-xs">
-                        +{formatVND(charge.priceVnd)}/{charge.chargeType === 'per_item' ? 'cái' : 'lần'}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Price summary */}
             <div className="space-y-2 bg-muted/50 p-4 rounded-xl">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Đơn giá</span>
                 <span>{unitPrice > 0 ? formatVND(unitPrice) : '--'} × {quantity}</span>
               </div>
-              {extraTotal > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Phụ phí</span>
-                  <span>+{formatVND(extraTotal)}</span>
-                </div>
-              )}
               <div className="flex justify-between pt-2 border-t font-bold text-lg">
                 <span>Tổng cộng</span>
                 <span className="text-primary">{subtotal > 0 ? formatVND(subtotal) : '--'}</span>
@@ -218,7 +219,7 @@ export default function SampleDetail() {
         </div>
 
         {/* Price grid table */}
-        {activeGrid && (
+        {activePrice && activePrice.quantityTiers.length > 0 && (
           <div className="mt-12">
             <h2 className="mb-4 font-semibold text-lg">Bảng giá tham khảo</h2>
             <div className="border rounded-xl overflow-x-auto">
@@ -226,18 +227,17 @@ export default function SampleDetail() {
                 <thead className="bg-muted/50">
                   <tr>
                     <th className="px-4 py-3 font-medium text-left">Số lượng</th>
-                    {Object.keys(activeGrid.gridData.rows[0]?.values || {}).map((size) => (
-                      <th key={size} className="px-4 py-3 font-medium text-right">{size}</th>
-                    ))}
+                    <th className="px-4 py-3 font-medium text-right">Đơn giá</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {activeGrid.gridData.rows.map((row, i) => (
-                    <tr key={i} className={`border-t ${quantity >= parseInt(row.quantity) ? 'bg-primary/5' : ''}`}>
-                      <td className="px-4 py-3 font-medium">{row.quantity} cái+</td>
-                      {Object.values(row.values).map((price, j) => (
-                        <td key={j} className="px-4 py-3 text-right">{formatVND(price)}</td>
-                      ))}
+                  {activePrice.quantityTiers.map((tier) => (
+                    <tr key={tier.id} className={`border-t ${quantity >= tier.minQuantity && (tier.maxQuantity === null || quantity <= tier.maxQuantity) ? 'bg-primary/5' : ''}`}>
+                      <td className="px-4 py-3 font-medium">
+                        {tier.minQuantity}
+                        {tier.maxQuantity ? ` - ${tier.maxQuantity}` : '+'} cái
+                      </td>
+                      <td className="px-4 py-3 text-right">{formatVND(tier.pricePerUnit)}</td>
                     </tr>
                   ))}
                 </tbody>
