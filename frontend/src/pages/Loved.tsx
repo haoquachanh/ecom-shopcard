@@ -12,7 +12,12 @@ export default function Loved() {
 
   return (
     <>
-      <SEOHead title="Sản phẩm yêu thích" description="Danh sách sản phẩm yêu thích của bạn." />
+      <SEOHead
+        title="Sản phẩm yêu thích"
+        description="Danh sách mẫu ảnh nổi 3D bạn đã lưu để tham khảo."
+        canonicalPath="/loved"
+        noindex
+      />
 
       <section className="home-creative relative overflow-hidden px-4 pb-8 pt-8 md:pb-12 md:pt-12">
         <div className="pointer-events-none absolute right-[12%] top-12 h-24 w-24 rounded-full bg-[#8b5cf6]/14 blur-2xl" />

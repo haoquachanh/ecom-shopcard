@@ -23,8 +23,11 @@ export default function PriceList() {
   return (
     <>
       <SEOHead
-        title="Bảng giá"
-        description="Bảng giá tham khảo cho in ấn 3D lenticular, thiết kế và sản xuất theo yêu cầu của Lenti Lab."
+        title="Bảng giá ảnh nổi 3D Lenticular"
+        description="Bảng giá tham khảo cho in ảnh nổi 3D lenticular, standee mica, thiết kế mẫu và sản xuất POSM theo kích thước, số lượng, hiệu ứng."
+        canonicalPath="/pricing"
+        image="/img/card01.jpg"
+        keywords={['bảng giá ảnh nổi 3D', 'giá in lenticular', 'giá standee mica']}
       />
 
       <section className="home-creative relative overflow-hidden px-4 pt-10 pb-12 md:pt-14">
