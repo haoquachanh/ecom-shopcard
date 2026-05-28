@@ -1,32 +1,40 @@
 import { getSupabaseClient } from '@/lib/supabase';
 import type { ProductType, Sample } from '@/types/product.types';
 
-type ProductTypeRow = {
+type PublicProductTypeRow = {
   id: number;
   name: string;
   slug: string | null;
   description: string | null;
   image_url: string | null;
-  is_active: boolean;
+  sort_order: number;
+  metadata: Record<string, unknown>;
+};
+
+type SampleMediaRow = {
+  id: number;
+  media_type: 'image' | 'video';
+  public_url: string | null;
+  storage_path: string;
+  alt_text: string | null;
+  is_primary: boolean;
   sort_order: number;
 };
 
-type SampleRow = {
+type SampleProductRow = {
   id: number;
   product_type_id: number;
   name: string;
   slug: string | null;
   description: string | null;
-  image_url: string | null;
-  thumbnail_url: string | null;
   tags: string[];
-  is_active: boolean;
-  sample_images?: Array<{
-    id: number;
-    image_url: string;
-    sort_order: number;
-  }>;
-  productType?: ProductTypeRow | ProductTypeRow[] | null;
+  metadata: Record<string, unknown>;
+  product_types?: PublicProductTypeRow | PublicProductTypeRow[] | null;
+  sample_product_media?: SampleMediaRow[];
+};
+
+type HomepageData = {
+  productTypes?: PublicProductTypeRow[];
 };
 
 export function slugify(value: string) {
@@ -48,93 +56,120 @@ export function idFromSlug(slug: string) {
   return match ? Number(match[1]) : null;
 }
 
-export function mapProductType(row: ProductTypeRow): ProductType {
-  return {
-    id: row.id,
-    name: row.name,
-    slug: row.slug || makeEntitySlug(row.id, row.name),
-    description: row.description || undefined,
-    imageUrl: row.image_url || undefined,
-    pricingConfig: {},
-    isActive: row.is_active,
-  };
-}
-
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
   return Array.isArray(value) ? value[0] || null : value || null;
 }
 
-export function mapSample(row: SampleRow): Sample {
-  const productTypeRow = firstRelation(row.productType);
+function mapProductType(row: PublicProductTypeRow): ProductType {
   return {
-    id: row.id,
-    productTypeId: row.product_type_id,
-    productType: productTypeRow ? mapProductType(productTypeRow) : undefined,
+    id: Number(row.id),
     name: row.name,
-    slug: row.slug || makeEntitySlug(row.id, row.name),
+    slug: row.slug || makeEntitySlug(Number(row.id), row.name),
     description: row.description || undefined,
     imageUrl: row.image_url || undefined,
-    thumbnailUrl: row.thumbnail_url || row.image_url || undefined,
-    tags: row.tags || [],
-    isActive: row.is_active,
-    images: (row.sample_images || []).map((image) => ({
-      id: image.id,
-      imageUrl: image.image_url,
-      sortOrder: image.sort_order,
-    })),
+    pricingConfig: row.metadata ?? {},
+    isActive: true,
   };
+}
+
+function mapSample(row: SampleProductRow): Sample {
+  const media = [...(row.sample_product_media ?? [])].sort((a, b) => {
+    if (a.is_primary !== b.is_primary) return a.is_primary ? -1 : 1;
+    return a.sort_order - b.sort_order || a.id - b.id;
+  });
+  const images = media
+    .filter((item) => item.media_type === 'image' && item.public_url)
+    .map((item) => ({
+      id: Number(item.id),
+      imageUrl: item.public_url || '',
+      sortOrder: Number(item.sort_order),
+    }));
+  const videos = media
+    .filter((item) => item.media_type === 'video' && item.public_url)
+    .map((item) => ({
+      id: Number(item.id),
+      videoUrl: item.public_url || '',
+      sortOrder: Number(item.sort_order),
+      altText: item.alt_text || undefined,
+    }));
+  const allMedia = media
+    .filter((item) => item.public_url)
+    .map((item) => ({
+      id: Number(item.id),
+      type: item.media_type,
+      url: item.public_url || '',
+      sortOrder: Number(item.sort_order),
+      altText: item.alt_text || undefined,
+      isPrimary: item.is_primary,
+    }));
+  const primaryImage = images[0]?.imageUrl;
+  const productTypeRow = firstRelation(row.product_types);
+
+  return {
+    id: Number(row.id),
+    productTypeId: Number(row.product_type_id),
+    productType: productTypeRow ? mapProductType(productTypeRow) : undefined,
+    name: row.name,
+    slug: row.slug || makeEntitySlug(Number(row.id), row.name),
+    description: row.description || undefined,
+    imageUrl: primaryImage,
+    thumbnailUrl: primaryImage,
+    tags: row.tags || [],
+    isActive: true,
+    images,
+    videos,
+    media: allMedia,
+  };
+}
+
+async function listSampleRows(productTypeId?: number) {
+  const supabase = getSupabaseClient();
+  let query = supabase
+    .from('sample_products')
+    .select(
+      'id,product_type_id,name,slug,description,tags,metadata,product_types(id,name,slug,description,image_url,sort_order,metadata),sample_product_media(id,media_type,public_url,storage_path,alt_text,is_primary,sort_order)',
+    )
+    .eq('status', 'active')
+    .is('deleted_at', null)
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: true });
+
+  if (productTypeId) {
+    query = query.eq('product_type_id', productTypeId);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data || []) as unknown as SampleProductRow[];
 }
 
 export const productTypesService = {
   async getAll() {
     const supabase = getSupabaseClient();
-    const { data, error } = await supabase
-      .from('product_types')
-      .select('id,name,slug,description,image_url,is_active,sort_order,created_at,updated_at')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true });
-
+    const { data, error } = await supabase.rpc('get_homepage_data');
     if (error) throw error;
-    return (data || []).map(mapProductType);
+
+    const payload = (data || {}) as HomepageData;
+    return (payload.productTypes || []).map(mapProductType);
   },
 
   async getOne(id: number) {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase
-      .from('product_types')
-      .select('id,name,slug,description,image_url,is_active,sort_order,created_at,updated_at')
+      .from('public_active_product_types')
+      .select('id,name,slug,description,image_url,sort_order,metadata')
       .eq('id', id)
-      .eq('is_active', true)
       .single();
 
     if (error) throw error;
-    return mapProductType(data);
+    return mapProductType(data as PublicProductTypeRow);
   },
 };
 
 export const samplesService = {
   async getAll(productTypeId?: number) {
-    const supabase = getSupabaseClient();
-    let query = supabase
-      .from('samples')
-      .select(
-        'id,product_type_id,name,slug,description,image_url,thumbnail_url,tags,is_active,sort_order,created_at,updated_at,productType:product_types(id,name,slug,description,image_url,is_active,sort_order,created_at,updated_at),sample_images(id,image_url,sort_order)',
-      )
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: false });
-
-    if (productTypeId) {
-      query = query.eq('product_type_id', productTypeId);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-
-    return ((data || []) as SampleRow[])
-      .filter((row) => firstRelation(row.productType)?.is_active !== false)
-      .map(mapSample);
+    const rows = await listSampleRows(productTypeId);
+    return rows.map(mapSample);
   },
 
   async getBySlug(slug: string) {
@@ -143,30 +178,34 @@ export const samplesService = {
       return this.getOne(id);
     }
 
-    const samples = await this.getAll();
-    const sample = samples.find((item) => item.slug === slug);
-    if (!sample) {
-      throw new Error('Sample not found');
-    }
-    return sample;
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('sample_products')
+      .select(
+        'id,product_type_id,name,slug,description,tags,metadata,product_types(id,name,slug,description,image_url,sort_order,metadata),sample_product_media(id,media_type,public_url,storage_path,alt_text,is_primary,sort_order)',
+      )
+      .eq('slug', slug)
+      .eq('status', 'active')
+      .is('deleted_at', null)
+      .single();
+
+    if (error) throw error;
+    return mapSample(data as unknown as SampleProductRow);
   },
 
   async getOne(id: number) {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase
-      .from('samples')
+      .from('sample_products')
       .select(
-        'id,product_type_id,name,slug,description,image_url,thumbnail_url,tags,is_active,sort_order,created_at,updated_at,productType:product_types(id,name,slug,description,image_url,is_active,sort_order,created_at,updated_at),sample_images(id,image_url,sort_order)',
+        'id,product_type_id,name,slug,description,tags,metadata,product_types(id,name,slug,description,image_url,sort_order,metadata),sample_product_media(id,media_type,public_url,storage_path,alt_text,is_primary,sort_order)',
       )
       .eq('id', id)
-      .eq('is_active', true)
+      .eq('status', 'active')
+      .is('deleted_at', null)
       .single();
 
     if (error) throw error;
-    const sample = mapSample(data as SampleRow);
-    if (sample.productType?.isActive === false) {
-      throw new Error('Sample not found');
-    }
-    return sample;
+    return mapSample(data as unknown as SampleProductRow);
   },
 };

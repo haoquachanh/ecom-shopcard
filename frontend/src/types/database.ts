@@ -10,136 +10,99 @@ export interface Database {
           slug: string | null;
           description: string | null;
           image_url: string | null;
-          is_active: boolean;
+          status: 'draft' | 'active' | 'inactive' | 'archived';
           sort_order: number;
+          metadata: Json;
+          deleted_at: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: never;
         Update: never;
       };
-      samples: {
+      sample_products: {
         Row: {
           id: number;
           product_type_id: number;
           name: string;
           slug: string | null;
           description: string | null;
-          image_url: string | null;
-          thumbnail_url: string | null;
+          status: 'draft' | 'active' | 'inactive' | 'archived';
+          sort_order: number;
           tags: string[];
-          is_active: boolean;
-          sort_order: number;
+          metadata: Json;
+          deleted_at: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: never;
         Update: never;
       };
-      sample_images: {
+      sample_product_media: {
         Row: {
           id: number;
-          sample_id: number;
-          image_url: string;
+          sample_product_id: number;
+          media_type: 'image' | 'video';
+          bucket: string;
+          storage_path: string;
+          public_url: string | null;
           alt_text: string | null;
+          is_primary: boolean;
+          status: 'draft' | 'active' | 'inactive' | 'archived';
           sort_order: number;
-          is_active: boolean;
-          created_at: string;
-        };
-        Insert: never;
-        Update: never;
-      };
-      banners: {
-        Row: {
-          id: number;
-          title: string;
-          subtitle: string | null;
-          image_url: string | null;
-          link_url: string | null;
-          placement: string;
-          is_active: boolean;
-          sort_order: number;
-          starts_at: string | null;
-          ends_at: string | null;
+          metadata: Json;
           created_at: string;
           updated_at: string;
-        };
-        Insert: never;
-        Update: never;
-      };
-      materials: {
-        Row: {
-          id: number;
-          name: string;
-          display_order: number;
-          is_active: boolean;
-        };
-        Insert: never;
-        Update: never;
-      };
-      sizes: {
-        Row: {
-          id: number;
-          name: string;
-          sort_order: number;
-          is_active: boolean;
-        };
-        Insert: never;
-        Update: never;
-      };
-      effects: {
-        Row: {
-          id: number;
-          name: string;
-          is_active: boolean;
-        };
-        Insert: never;
-        Update: never;
-      };
-      sides: {
-        Row: {
-          id: number;
-          name: string;
-          sort_order: number;
-          is_active: boolean;
-        };
-        Insert: never;
-        Update: never;
-      };
-      base_prices: {
-        Row: {
-          id: number;
-          product_type_id: number | null;
-          material_id: number;
-          size_id: number;
-          side_id: number;
-          effect_id: number | null;
-          unit_price: string;
-          is_active: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: never;
-        Update: never;
-      };
-      quantity_tiers: {
-        Row: {
-          id: number;
-          base_price_id: number;
-          min_quantity: number;
-          max_quantity: number | null;
-          price_per_unit: string;
-          is_active: boolean;
         };
         Insert: never;
         Update: never;
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: {
+      public_active_product_types: {
+        Row: {
+          id: number;
+          name: string;
+          slug: string | null;
+          description: string | null;
+          image_url: string | null;
+          sort_order: number;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+      };
+    };
+    Functions: {
+      get_homepage_data: {
+        Args: Record<string, never>;
+        Returns: Json;
+      };
+      get_active_price_table: {
+        Args: {
+          product_type_slug: string;
+        };
+        Returns: Json;
+      };
+      get_product_type_detail: {
+        Args: {
+          product_type_slug: string;
+        };
+        Returns: Json;
+      };
+      track_page_view: {
+        Args: {
+          p_visitor_id: string;
+          p_session_id: string;
+          p_path: string;
+          p_referrer_host?: string | null;
+        };
+        Returns: Json;
+      };
+    };
     Enums: {
-      user_role: 'user' | 'admin';
-      order_status: 'pending' | 'confirmed' | 'printing' | 'shipped' | 'cancelled';
+      public_record_status: 'draft' | 'active' | 'inactive' | 'archived';
+      media_type: 'image' | 'video';
     };
     CompositeTypes: Record<string, never>;
   };

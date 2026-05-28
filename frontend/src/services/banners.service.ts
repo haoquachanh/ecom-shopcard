@@ -8,35 +8,42 @@ export interface Banner {
   linkUrl?: string;
 }
 
-type BannerRow = {
-  id: number;
-  title: string;
-  subtitle: string | null;
-  image_url: string | null;
-  link_url: string | null;
+type HomepageSection = {
+  section?: {
+    id: number;
+    title: string | null;
+    subtitle: string | null;
+    cta_url: string | null;
+  };
+  media?: Array<{
+    public_url: string | null;
+    sort_order: number;
+  }>;
+};
+
+type HomepageData = {
+  sections?: HomepageSection[];
 };
 
 export const bannersService = {
   async getHomeBanners(): Promise<Banner[]> {
     const supabase = getSupabaseClient();
-    const { data, error } = await supabase
-      .from('banners' as never)
-      .select('id,title,subtitle,image_url,link_url,placement,is_active,sort_order')
-      .eq('placement', 'home')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true });
-
+    const { data, error } = await supabase.rpc('get_homepage_data');
     if (error) throw error;
 
-    return ((data || []) as BannerRow[])
-      .filter((row) => row.image_url)
-      .map((row) => ({
-        id: row.id,
-        title: row.title,
-        subtitle: row.subtitle || undefined,
-        imageUrl: row.image_url || '',
-        linkUrl: row.link_url || undefined,
-      }));
+    const payload = (data || {}) as HomepageData;
+    return (payload.sections || [])
+      .map((entry) => {
+        const imageUrl = [...(entry.media || [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.public_url;
+        if (!entry.section || !imageUrl) return null;
+        return {
+          id: Number(entry.section.id),
+          title: entry.section.title || '',
+          subtitle: entry.section.subtitle || undefined,
+          imageUrl,
+          linkUrl: entry.section.cta_url || undefined,
+        };
+      })
+      .filter(Boolean) as Banner[];
   },
 };
