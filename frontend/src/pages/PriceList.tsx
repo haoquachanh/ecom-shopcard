@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { SEOHead } from '@/components/common/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SHOP_HOTLINE, SHOP_HOTLINE_HREF, SHOP_NAME, SHOP_SERVICE_LINE, SHOP_TAGLINE, SHOP_ZALO_HREF } from '@/lib/site';
+import { productTypesService } from '@/services/products.service';
+import { formatCompactVnd, pricingService, type ActivePriceTable } from '@/services/pricing.service';
 import { ArrowRight, BadgeCheck, CircleDollarSign, Layers3, MessageCircle, Phone, Sparkles } from 'lucide-react';
 
 const pricingHighlights = [
@@ -19,7 +22,62 @@ const serviceRows = [
   ['Giao nhận', 'Hỗ trợ nội thành và toàn quốc'],
 ];
 
+function PublicPriceMatrix({ table }: { table: ActivePriceTable }) {
+  const matrix = table.matrix;
+  if (!matrix) return null;
+
+  return (
+    <div className="overflow-hidden rounded-[1.5rem] border border-primary/10 bg-white shadow-[0_18px_48px_rgba(253,20,63,0.08)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#fff7f9] px-5 py-4">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">{table.productType?.name}</p>
+          <h2 className="mt-1 text-xl font-black text-[#9f1239]">{matrix.title}</h2>
+        </div>
+        <Badge className="rounded-full bg-primary/10 px-3 py-1 text-primary hover:bg-primary/10">v{table.priceTable.version}</Badge>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-[620px] w-full border-separate border-spacing-0 text-sm">
+          <thead>
+            <tr>
+              <th className="sticky left-0 z-10 bg-primary px-4 py-3 text-left font-black text-white">{matrix.quantityLabel}</th>
+              {matrix.columns.map((column) => (
+                <th key={column.id ?? 'base'} className="border-b border-primary/10 bg-white px-4 py-3 text-center font-black text-[#be123c]">
+                  {column.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {matrix.rows.map((row) => (
+              <tr key={row.id}>
+                <th className="sticky left-0 z-10 border-t border-white/20 bg-primary px-4 py-3 text-left font-black text-white">
+                  {row.label}
+                </th>
+                {row.cells.map((cell) => (
+                  <td key={`${row.id}-${cell.columnValueId ?? 'base'}`} className="border-t border-primary/10 px-4 py-3 text-center">
+                    <strong className="text-lg font-black text-[#be123c]">{formatCompactVnd(cell.priceVnd)}/c</strong>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {matrix.notes ? <p className="border-t border-primary/10 bg-[#fff7f9] px-5 py-4 text-sm font-semibold leading-6 text-[#7f1d3a]">{matrix.notes}</p> : null}
+    </div>
+  );
+}
+
 export default function PriceList() {
+  const { data: priceTables = [] } = useQuery({
+    queryKey: ['public-price-tables'],
+    queryFn: async () => {
+      const productTypes = await productTypesService.getAll();
+      const tables = await Promise.all(productTypes.map((type) => pricingService.getActivePriceTable(type.slug)));
+      return tables.filter(Boolean) as ActivePriceTable[];
+    },
+  });
+
   return (
     <>
       <SEOHead
@@ -121,6 +179,20 @@ export default function PriceList() {
       </section>
 
       <section className="px-4 py-12">
+        {priceTables.length > 0 ? (
+          <div className="container mx-auto mb-8 grid gap-5">
+            <div className="max-w-3xl">
+              <Badge className="rounded-full bg-primary/10 px-3 py-1 text-primary hover:bg-primary/10">
+                Bảng giá đang áp dụng
+              </Badge>
+              <h2 className="mt-4 text-3xl font-black text-[#9f1239]">Bảng giá public theo loại sản phẩm.</h2>
+            </div>
+            {priceTables.map((table) => (
+              <PublicPriceMatrix key={table.priceTable.id} table={table} />
+            ))}
+          </div>
+        ) : null}
+
         <div className="container mx-auto rounded-[2rem] border border-primary/10 bg-white px-6 py-8 shadow-[0_24px_70px_rgba(253,20,63,0.08)] md:px-10">
           <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-center">
             <div>

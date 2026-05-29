@@ -29,7 +29,7 @@ export default function SampleDetail() {
   const [quantity, setQuantity] = useState(20);
 
   const { data: priceConfigs = [], isLoading: isPricingLoading, isError: isPricingError } = useQuery({
-    queryKey: ['base-prices', sample?.productTypeId],
+    queryKey: ['active-price-table-configs', sample?.productTypeId],
     queryFn: () => pricingService.getBasePrices(sample!.productTypeId),
     enabled: !!sample?.productTypeId,
   });
@@ -115,7 +115,7 @@ export default function SampleDetail() {
 
             {isPricingError && (
               <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm text-destructive">
-                Chưa tải được bảng giá public. Kiểm tra RLS policy cho base_prices và quantity_tiers.
+                Chưa tải được bảng giá public. Kiểm tra active price table và RPC get_active_price_table.
               </div>
             )}
 
