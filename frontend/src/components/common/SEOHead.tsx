@@ -25,6 +25,8 @@ interface SEOHeadProps {
 }
 
 const DEFAULT_DESC = `${SHOP_SHORT_NAME} thiết kế và sản xuất ảnh nổi 3D lenticular, standee mica, ảnh flip, ảnh depth, thẻ motion và POSM cho quà tặng thương hiệu.`;
+const DEFAULT_OG_IMAGE_WIDTH = '1200';
+const DEFAULT_OG_IMAGE_HEIGHT = '630';
 
 function getOrigin() {
   if (SITE_URL) return SITE_URL;
@@ -37,6 +39,22 @@ function absoluteUrl(pathOrUrl: string) {
   const origin = getOrigin();
   const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
   return origin ? `${origin}${path}` : path;
+}
+
+function normalizePath(pathOrUrl: string) {
+  if (/^https?:\/\//i.test(pathOrUrl)) {
+    try {
+      const url = new URL(pathOrUrl);
+      return `${url.pathname}${url.search}` || '/';
+    } catch {
+      return '/';
+    }
+  }
+
+  const [path, query = ''] = pathOrUrl.split('?');
+  const cleanPath = path || '/';
+  const normalizedPath = cleanPath === '/' ? '/' : cleanPath.replace(/\/+$/, '');
+  return query ? `${normalizedPath}?${query}` : normalizedPath;
 }
 
 function cleanDescription(value: string) {
@@ -89,11 +107,12 @@ export function SEOHead({
 }: SEOHeadProps) {
   const location = useLocation();
   const origin = getOrigin();
-  const canonicalUrl = absoluteUrl(canonicalPath || location.pathname || '/');
+  const canonicalUrl = absoluteUrl(normalizePath(canonicalPath || location.pathname || '/'));
   const imageUrl = absoluteUrl(image);
   const fullTitle = title.includes(SHOP_SHORT_NAME) ? title : `${title} | ${SHOP_SHORT_NAME}`;
   const metaDescription = cleanDescription(description);
-  const allKeywords = Array.from(new Set([...SHOP_KEYWORDS, ...keywords])).join(', ');
+  const allKeywords = Array.from(new Set([...SHOP_KEYWORDS, ...keywords].map((item) => item.trim()).filter(Boolean))).join(', ');
+  const siteUrl = origin || canonicalUrl;
   const pageStructuredData = {
     '@context': 'https://schema.org',
     '@type': type === 'product' ? 'ItemPage' : 'WebPage',
@@ -104,7 +123,7 @@ export function SEOHead({
     isPartOf: {
       '@type': 'WebSite',
       name: SHOP_NAME,
-      url: origin || canonicalUrl,
+      url: siteUrl,
     },
   };
   const customStructuredData = Array.isArray(structuredData)
@@ -131,6 +150,8 @@ export function SEOHead({
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={imageUrl} />
       <meta property="og:image:alt" content={title} />
+      <meta property="og:image:width" content={DEFAULT_OG_IMAGE_WIDTH} />
+      <meta property="og:image:height" content={DEFAULT_OG_IMAGE_HEIGHT} />
       <meta property="og:locale" content="vi_VN" />
 
       <meta name="twitter:card" content="summary_large_image" />

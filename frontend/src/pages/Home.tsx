@@ -7,12 +7,17 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { samplesService } from '@/services/products.service';
 import {
+  SHOP_ADDRESS,
+  SHOP_EMAIL,
   SHOP_HOTLINE_HREF,
+  SHOP_HOTLINE,
+  SHOP_NAME,
   SHOP_PROMISES,
   SHOP_SERVICE_LINE,
   SHOP_SHORT_NAME,
   SHOP_TAGLINE,
   SHOP_ZALO_HREF,
+  SITE_URL,
 } from '@/lib/site';
 import {
   ArrowRight,
@@ -23,6 +28,7 @@ import {
   PackageCheck,
   Palette,
   PhoneCall,
+  ShieldCheck,
   ScanLine,
   Sparkles,
   Wand2,
@@ -41,21 +47,54 @@ const salesSignals = [
 ];
 
 const conversionReasons = [
-  { title: 'Dễ hình dung trước khi làm', text: 'Xem mẫu có sẵn để chọn hiệu ứng gần nhất với nhu cầu.', icon: Eye },
-  { title: 'Phù hợp chiến dịch nhỏ và lớn', text: 'Có thể bắt đầu từ mẫu quà tặng, POSM hoặc bộ sưu tập.', icon: PackageCheck },
-  { title: 'Tư vấn nhanh qua Zalo', text: 'Gửi ảnh, ý tưởng và kích thước để được gợi ý hướng làm.', icon: MessageCircle },
+  { title: 'Dễ hình dung trước khi làm', text: 'Xem mẫu ảnh nổi 3D lenticular có sẵn để chọn hiệu ứng gần nhất với nhu cầu.', icon: Eye },
+  { title: 'Phù hợp chiến dịch nhỏ và lớn', text: 'Có thể bắt đầu từ quà tặng thương hiệu, POSM, standee mica hoặc bộ sưu tập.', icon: PackageCheck },
+  { title: 'Tư vấn nhanh qua Zalo', text: 'Gửi ảnh, ý tưởng và kích thước để được gợi ý hiệu ứng flip, depth hoặc motion.', icon: MessageCircle },
 ];
 
 const useCases = [
-  { title: 'Quà tặng thương hiệu', text: 'Một mẫu nhỏ nhưng tạo cảm giác có chiều sâu, dễ nhớ và dễ chia sẻ.', icon: PackageCheck },
-  { title: 'POSM & trưng bày', text: 'Tăng độ hút mắt tại quầy, booth, showroom bằng hiệu ứng nhìn nghiêng.', icon: ScanLine },
-  { title: 'Bộ sưu tập cá nhân', text: 'Biến nhân vật, khoảnh khắc hoặc artwork thành vật phẩm nhiều lớp.', icon: Wand2 },
+  { title: 'Quà tặng thương hiệu', text: 'In ảnh nổi 3D cho quà tặng, thẻ sưu tầm, postcard hoặc vật phẩm nhận diện dễ nhớ.', icon: PackageCheck },
+  { title: 'POSM & trưng bày', text: 'Thiết kế POSM lenticular, standee mica và vật phẩm trưng bày tạo hiệu ứng khi đổi góc nhìn.', icon: ScanLine },
+  { title: 'Bộ sưu tập cá nhân', text: 'Biến nhân vật, khoảnh khắc hoặc artwork thành mẫu flip, depth, motion có chiều sâu.', icon: Wand2 },
 ];
 
 const processSteps = [
-  { title: 'Chọn hướng nhìn', text: 'Xác định hiệu ứng flip, depth hoặc motion phù hợp với nội dung.' },
-  { title: 'Dựng lớp hình', text: 'Tách layer, kiểm tra bố cục và tối ưu file để hiệu ứng rõ hơn.' },
-  { title: 'Hoàn thiện mẫu', text: 'Chốt kích thước, chất liệu và phiên bản tham khảo trước khi sản xuất.' },
+  { title: 'Chọn hướng nhìn', text: 'Xác định ảnh flip, ảnh depth hoặc thẻ motion phù hợp với nội dung cần thể hiện.' },
+  { title: 'Dựng lớp hình', text: 'Tách layer, kiểm tra bố cục và tối ưu file in lenticular để hiệu ứng rõ hơn.' },
+  { title: 'Hoàn thiện mẫu', text: 'Chốt kích thước, chất liệu, số lượng và phiên bản tham khảo trước khi sản xuất.' },
+];
+
+const serviceHighlights = [
+  {
+    title: 'In ảnh nổi 3D lenticular',
+    text: 'Tạo chiều sâu hoặc chuyển ảnh khi người xem thay đổi góc nhìn, phù hợp quà tặng, card và hình trưng bày.',
+    icon: Layers3,
+  },
+  {
+    title: 'Standee mica và vật phẩm trưng bày',
+    text: 'Thiết kế mẫu đứng, đế mica, POSM và vật phẩm để bàn cho sự kiện, booth, showroom hoặc chiến dịch thương hiệu.',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'Thiết kế hiệu ứng flip, depth, motion',
+    text: 'Tư vấn cách xử lý hình ảnh, tách lớp và chọn hiệu ứng để mẫu in rõ chuyển động, rõ chiều sâu.',
+    icon: Wand2,
+  },
+];
+
+const faqItems = [
+  {
+    question: 'Ảnh nổi 3D lenticular phù hợp với nhu cầu nào?',
+    answer: 'Ảnh nổi 3D lenticular phù hợp làm quà tặng thương hiệu, thẻ sưu tầm, standee mica, POSM trưng bày, vật phẩm sự kiện và các mẫu hình cần tạo cảm giác chiều sâu hoặc chuyển động.',
+  },
+  {
+    question: 'Nên chọn hiệu ứng flip, depth hay motion?',
+    answer: 'Flip phù hợp khi muốn chuyển giữa hai hoặc nhiều hình, depth phù hợp khi cần chiều sâu nhiều lớp, motion phù hợp khi muốn tạo cảm giác chuyển động khi nghiêng sản phẩm.',
+  },
+  {
+    question: 'Lenti Lab có nhận tư vấn file trước khi in không?',
+    answer: 'Có. Bạn có thể gửi hình ảnh, ý tưởng, kích thước và số lượng qua Zalo để được gợi ý hiệu ứng, chất liệu và hướng dựng file phù hợp trước khi sản xuất.',
+  },
 ];
 
 export default function Home() {
@@ -65,15 +104,79 @@ export default function Home() {
   });
 
   const featuredSamples = samples.slice(0, 4);
+  const homeUrl = SITE_URL || '/';
+  const logoUrl = SITE_URL ? `${SITE_URL}/img/logo.jpg` : '/img/logo.jpg';
 
   return (
     <>
       <SEOHead
-        title="Ảnh nổi 3D Lenticular, standee mica và POSM thương hiệu"
-        description="Lenti Lab thiết kế và sản xuất ảnh nổi 3D lenticular, standee mica, ảnh flip, ảnh depth, thẻ motion và POSM cho quà tặng thương hiệu."
+        title="Ảnh nổi 3D Lenticular, Standee Mica | Lenti Lab"
+        description="Lenti Lab thiết kế, in ảnh nổi 3D lenticular, standee mica, ảnh flip/depth/motion và POSM thương hiệu tại TPHCM, tư vấn toàn quốc."
         canonicalPath="/"
         image="/img/logo.jpg"
-        keywords={['in ảnh nổi 3D TPHCM', 'làm standee mica', 'in ảnh lenticular Việt Nam']}
+        keywords={[
+          'in ảnh nổi 3D TPHCM',
+          'làm standee mica',
+          'in ảnh lenticular Việt Nam',
+          'thiết kế ảnh 3D lenticular',
+          'POSM lenticular thương hiệu',
+          'quà tặng thương hiệu 3D',
+        ]}
+        structuredData={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'LocalBusiness',
+            name: SHOP_SHORT_NAME,
+            legalName: SHOP_NAME,
+            description: 'Thiết kế và in ảnh nổi 3D lenticular, standee mica, ảnh flip, ảnh depth, thẻ motion và POSM thương hiệu.',
+            url: homeUrl,
+            image: logoUrl,
+            telephone: SHOP_HOTLINE,
+            email: SHOP_EMAIL,
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: SHOP_ADDRESS,
+              addressLocality: 'Ho Chi Minh City',
+              addressCountry: 'VN',
+            },
+            areaServed: [
+              { '@type': 'City', name: 'Ho Chi Minh City' },
+              { '@type': 'Country', name: 'Vietnam' },
+            ],
+            makesOffer: serviceHighlights.map((item) => ({
+              '@type': 'Offer',
+              itemOffered: {
+                '@type': 'Service',
+                name: item.title,
+                description: item.text,
+              },
+            })),
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Trang chủ',
+                item: homeUrl,
+              },
+            ],
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqItems.map((item) => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+              },
+            })),
+          },
+        ]}
       />
 
       <section className="home-creative relative overflow-hidden px-4 pb-14 pt-8 md:pb-20 md:pt-14">
@@ -91,10 +194,10 @@ export default function Home() {
             <div className="space-y-5">
               <p className="text-xs font-black uppercase tracking-[0.32em] text-primary">{SHOP_SHORT_NAME}</p>
               <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-[#9f1239] md:text-7xl">
-                Ảnh nổi 3D, nhìn nghiêng là thấy chuyển động.
+                In ảnh nổi 3D lenticular, nhìn nghiêng là thấy chuyển động.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-[#7f1d3a] md:text-lg">
-                {SHOP_TAGLINE}
+                {SHOP_TAGLINE} Nhận tư vấn ảnh flip, ảnh depth, thẻ motion, standee mica và POSM lenticular cho khách hàng tại TPHCM và toàn quốc.
               </p>
             </div>
 
@@ -199,6 +302,29 @@ export default function Home() {
 
       <section className="px-4 py-10 md:py-14">
         <div className="mx-auto max-w-7xl">
+          <div className="mb-6 max-w-3xl">
+            <Badge className="rounded-full bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/10">
+              Dịch vụ chính
+            </Badge>
+            <h2 className="mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Thiết kế và in lenticular cho sản phẩm cần tạo ấn tượng.</h2>
+            <p className="mt-3 text-sm leading-7 text-[#7f1d3a]/75 md:text-base">
+              Lenti Lab tập trung vào ảnh nổi 3D, standee mica, vật phẩm trưng bày và POSM có hiệu ứng thị giác rõ khi người xem thay đổi góc nhìn.
+            </p>
+          </div>
+          <div className="mb-4 grid gap-4 md:grid-cols-3">
+            {serviceHighlights.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="rounded-[2rem] border border-primary/10 bg-white p-6 shadow-[0_18px_50px_rgba(253,20,63,0.08)]">
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${index === 1 ? 'bg-[#8b5cf6]/10 text-[#7c3aed]' : index === 2 ? 'bg-[#fb923c]/12 text-[#ea580c]' : 'bg-primary/10 text-primary'}`}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="mt-6 text-xl font-black text-[#be123c]">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-[#7f1d3a]">{item.text}</p>
+                </div>
+              );
+            })}
+          </div>
           <div className="grid gap-4 md:grid-cols-3">
             {useCases.map((item) => {
               const Icon = item.icon;
@@ -277,6 +403,28 @@ export default function Home() {
               <p className="mt-2 text-sm leading-6 text-[#7f1d3a]">{promise.text}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="px-4 py-10 md:py-16">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
+          <div>
+            <Badge className="rounded-full bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/10">
+              Câu hỏi thường gặp
+            </Badge>
+            <h2 className="mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Thông tin cần biết trước khi in ảnh nổi 3D.</h2>
+            <p className="mt-3 text-sm leading-7 text-[#7f1d3a]/75 md:text-base">
+              Những câu hỏi này giúp bạn chọn đúng hiệu ứng lenticular, chuẩn bị file ảnh và ước lượng hướng sản xuất trước khi trao đổi chi tiết.
+            </p>
+          </div>
+          <div className="space-y-3">
+            {faqItems.map((item) => (
+              <article key={item.question} className="rounded-[1.5rem] border border-primary/10 bg-white p-5 shadow-[0_16px_42px_rgba(253,20,63,0.06)]">
+                <h3 className="text-base font-black text-[#9f1239]">{item.question}</h3>
+                <p className="mt-2 text-sm leading-7 text-[#7f1d3a]/78">{item.answer}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

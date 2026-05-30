@@ -24,7 +24,6 @@ export const SHOP_KEYWORDS = [
 ];
 
 export const SITE_URL = (import.meta.env.VITE_SITE_URL || '').replace(/\/$/, '');
-
 export const SHOP_PROMISES = [
   { title: 'Tư vấn nhanh', text: 'Từ ý tưởng đến lựa chọn mẫu, bạn luôn có người hỗ trợ rõ ràng.' },
   { title: 'Mẫu mã rõ ràng', text: 'Danh mục, hình ảnh và mô tả giúp bạn chọn đúng kiểu sản phẩm để tham khảo.' },
