@@ -26,19 +26,29 @@ export function SampleCard({ sample }: SampleCardProps) {
   };
 
   return (
-    <Card className="group flex h-full flex-col overflow-hidden rounded-[1.6rem] border-primary/10 bg-white shadow-[0_18px_44px_rgba(253,20,63,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_64px_rgba(253,20,63,0.14)]">
-      <div className="relative aspect-square overflow-hidden bg-primary/5">
+    <Card className="group relative flex h-full flex-col overflow-hidden rounded-[1.6rem] border-primary/10 bg-white shadow-[0_18px_44px_rgba(253,20,63,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_64px_rgba(253,20,63,0.14)]">
+      <Link to={`/product-detail/${sample.slug}`} className="relative block aspect-square overflow-hidden bg-primary/5">
         <img
           src={sample.thumbnailUrl || sample.imageUrl || 'https://placehold.co/300x300/f1f5f9/64748b?text=Chua+co+anh'}
           alt={sample.name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
+        {(sample.videos?.length || 0) > 0 ? (
+          <span className="absolute bottom-3 left-3 rounded-full bg-white/92 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-primary shadow-sm backdrop-blur">
+            Có video
+          </span>
+        ) : null}
+      </Link>
+      <div className="pointer-events-none absolute inset-x-0 top-0 aspect-square">
         <Button
           variant="secondary"
           size="icon"
-          className={`absolute right-3 top-3 h-9 w-9 rounded-xl border border-primary/10 bg-white/95 shadow-[0_10px_24px_rgba(253,20,63,0.14)] backdrop-blur transition-colors ${isLoved ? 'text-primary' : 'text-[#9f1239]'}`}
-          onClick={() => toggleLoved(lovedItem)}
+          className={`pointer-events-auto absolute right-3 top-3 h-9 w-9 rounded-xl border border-primary/10 bg-white/95 shadow-[0_10px_24px_rgba(253,20,63,0.14)] backdrop-blur transition-colors ${isLoved ? 'text-primary' : 'text-[#9f1239]'}`}
+          onClick={(event) => {
+            event.preventDefault();
+            toggleLoved(lovedItem);
+          }}
           aria-label={isLoved ? 'Bỏ yêu thích' : 'Yêu thích'}
         >
           <Heart className={`h-4 w-4 ${isLoved ? 'fill-current' : ''}`} />

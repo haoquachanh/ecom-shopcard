@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { SEOHead } from '@/components/common/SEOHead';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SHOP_ZALO_HREF } from '@/lib/site';
 import { samplesService } from '@/services/products.service';
-import { ArrowLeft, ArrowRight, BadgeCheck, Layers3, MessageCircle, Palette, Rotate3D, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BadgeCheck, Layers3, MessageCircle, Palette, Play, Rotate3D, Sparkles } from 'lucide-react';
 
 const featureCards = [
   { title: 'Hiệu ứng nhìn nghiêng', text: 'Tạo cảm giác chuyển ảnh, chiều sâu hoặc chuyển động khi đổi góc nhìn.', icon: Rotate3D },
@@ -17,6 +17,7 @@ const featureCards = [
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const [selectedMediaId, setSelectedMediaId] = useState<number | null>(null);
 
   const { data: sample, isLoading, isError } = useQuery({
     queryKey: ['product-detail', slug],
@@ -25,11 +26,22 @@ export default function ProductDetail() {
     retry: false,
   });
 
-  const gallery = [
-    sample?.imageUrl,
-    sample?.thumbnailUrl,
-    ...(sample?.images?.map((image) => image.imageUrl) || []),
-  ].filter(Boolean) as string[];
+  const gallery = useMemo(() => {
+    if (!sample) return [];
+    const media = sample.media?.filter((item) => item.url) ?? [];
+    if (media.length > 0) {
+      const imageMedia = media.filter((item) => item.type === 'image');
+      const videoMedia = media.filter((item) => item.type === 'video');
+      return [...imageMedia, ...videoMedia];
+    }
+    return (sample.images || []).map((image) => ({
+      id: image.id,
+      type: 'image' as const,
+      url: image.imageUrl,
+      sortOrder: image.sortOrder,
+    }));
+  }, [sample]);
+  const selectedMedia = gallery.find((item) => item.id === selectedMediaId) ?? gallery[0];
 
   if (isLoading) {
     return (
@@ -48,15 +60,23 @@ export default function ProductDetail() {
 
   if (isError || !sample) {
     return (
-      <section className="px-4 py-20">
-        <div className="bg-white shadow-[0_24px_70px_rgba(253,20,63,0.08)] mx-auto p-10 border border-primary/10 rounded-[2rem] text-center container">
-          <Layers3 className="mx-auto w-10 h-10 text-primary" />
-          <h1 className="mt-4 font-black text-[#9f1239] text-2xl">Không tìm thấy sản phẩm</h1>
-          <Button asChild className="bg-primary hover:bg-primary/90 mt-6 rounded-2xl text-white">
-            <Link to="/products">Quay lại sản phẩm</Link>
-          </Button>
-        </div>
-      </section>
+      <>
+        <SEOHead
+          title="Không tìm thấy sản phẩm"
+          description="Sản phẩm không tồn tại hoặc đã ngừng hiển thị tại Lenti Lab."
+          canonicalPath={slug ? `/product-detail/${slug}` : '/products'}
+          noindex
+        />
+        <section className="px-4 py-20">
+          <div className="bg-white shadow-[0_24px_70px_rgba(253,20,63,0.08)] mx-auto p-10 border border-primary/10 rounded-[2rem] text-center container">
+            <Layers3 className="mx-auto w-10 h-10 text-primary" />
+            <h1 className="mt-4 font-black text-[#9f1239] text-2xl">Không tìm thấy sản phẩm</h1>
+            <Button asChild className="bg-primary hover:bg-primary/90 mt-6 rounded-2xl text-white">
+              <Link to="/products">Quay lại sản phẩm</Link>
+            </Button>
+          </div>
+        </section>
+      </>
     );
   }
 
@@ -98,19 +118,44 @@ export default function ProductDetail() {
           <div className="lg:items-center gap-8 grid lg:grid-cols-[1.02fr_0.98fr]">
             <div className="bg-white/90 shadow-[0_30px_90px_rgba(253,20,63,0.12)] backdrop-blur p-4 border border-primary/10 rounded-[2rem]">
               <div className="relative bg-[#fff7f9] rounded-[1.5rem] aspect-square overflow-hidden">
-                <img
-                  src={sample.imageUrl || sample.thumbnailUrl || 'https://placehold.co/900x900/fff1f4/fd143f?text=Lenti+Lab'}
-                  alt={sample.name}
-                  className="w-full h-full object-cover"
-                />
+                {selectedMedia?.type === 'video' ? (
+                  <video
+                    src={selectedMedia.url}
+                    poster={sample.thumbnailUrl || sample.imageUrl}
+                    className="h-full w-full object-cover"
+                    controls
+                    playsInline
+                    preload="metadata"
+                  />
+                ) : (
+                  <img
+                    src={selectedMedia?.url || sample.imageUrl || sample.thumbnailUrl || 'https://placehold.co/900x900/fff1f4/fd143f?text=Lenti+Lab'}
+                    alt={sample.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(255,255,255,0.28),transparent_26%),linear-gradient(125deg,transparent,rgba(253,20,63,0.08),transparent)] pointer-events-none" />
               </div>
               {gallery.length > 1 && (
                 <div className="gap-3 grid grid-cols-4 mt-3">
-                  {gallery.slice(0, 4).map((image, index) => (
-                    <div key={`${image}-${index}`} className="bg-white border border-primary/10 rounded-2xl aspect-square overflow-hidden">
-                      <img src={image} alt="" className="w-full h-full object-cover" />
-                    </div>
+                  {gallery.slice(0, 8).map((media) => (
+                    <button
+                      key={`${media.type}-${media.id}`}
+                      type="button"
+                      className={`relative bg-white border rounded-2xl aspect-square overflow-hidden transition-colors ${selectedMedia?.id === media.id ? 'border-primary' : 'border-primary/10 hover:border-primary/40'}`}
+                      onClick={() => setSelectedMediaId(media.id)}
+                    >
+                      {media.type === 'video' ? (
+                        <>
+                          <video src={media.url} className="h-full w-full object-cover" muted preload="metadata" />
+                          <span className="absolute inset-0 grid place-items-center bg-black/18 text-white">
+                            <Play className="h-5 w-5 fill-current" />
+                          </span>
+                        </>
+                      ) : (
+                        <img src={media.url} alt="" className="w-full h-full object-cover" />
+                      )}
+                    </button>
                   ))}
                 </div>
               )}

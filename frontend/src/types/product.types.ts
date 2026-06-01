@@ -43,6 +43,22 @@ export interface SampleImage {
   sortOrder: number;
 }
 
+export interface SampleVideo {
+  id: number;
+  videoUrl: string;
+  sortOrder: number;
+  altText?: string;
+}
+
+export interface SampleMedia {
+  id: number;
+  type: 'image' | 'video';
+  url: string;
+  sortOrder: number;
+  altText?: string;
+  isPrimary?: boolean;
+}
+
 export interface Sample {
   id: number;
   productTypeId: number;
@@ -55,6 +71,8 @@ export interface Sample {
   tags?: string[];
   isActive: boolean;
   images?: SampleImage[];
+  videos?: SampleVideo[];
+  media?: SampleMedia[];
 }
 
 export interface PriceGrid {

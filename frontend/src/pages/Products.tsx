@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { SEOHead } from '@/components/common/SEOHead';
+import { FeaturedVideoSection } from '@/components/product/FeaturedVideoSection';
 import { HolographicSection } from '@/components/product/HolographicSection';
 import { SampleCard } from '@/components/product/SampleCard';
 import { Badge } from '@/components/ui/badge';
@@ -209,6 +210,7 @@ export default function Products() {
       </section>
 
       <HolographicSection />
+      <FeaturedVideoSection samples={displaySamples} />
 
       <section className="px-4 pb-14 md:pb-18">
         <div className="gap-6 grid lg:grid-cols-[280px_1fr] mx-auto max-w-7xl">
