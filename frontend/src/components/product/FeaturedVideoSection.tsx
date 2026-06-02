@@ -20,7 +20,7 @@ export function FeaturedVideoSection({ samples }: { samples: Sample[] }) {
               <Video className="h-3.5 w-3.5" />
               Video sản phẩm nổi bật
             </Badge>
-            <h2 className="mt-4 text-3xl font-black text-[#9f1239] md:text-5xl">Xem hiệu ứng chuyển động thực tế.</h2>
+            <h2 className="display-heading mt-4 text-3xl font-black text-[#9f1239] md:text-5xl">Xem hiệu ứng chuyển động thực tế.</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#7f1d3a]/78">
               Các mẫu đang có video được gom riêng để xem nhanh chuyển động, ánh phủ và cảm giác sản phẩm trước khi mở chi tiết.
             </p>

@@ -22,7 +22,7 @@ export function HolographicSection() {
               <Sparkles className="h-3.5 w-3.5" />
               Bộ sưu tập hologram
             </Badge>
-            <h2 className="mt-4 text-3xl font-black text-[#9f1239] md:text-5xl">Hiệu ứng phủ ánh cao cấp.</h2>
+            <h2 className="display-heading mt-4 text-3xl font-black text-[#9f1239] md:text-5xl">Hiệu ứng phủ ánh cao cấp.</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#7f1d3a]/78">
               Rê chuột lên từng card để xem ánh hologram, kim tuyến và vệt sáng phản hồi theo góc nhìn.
             </p>

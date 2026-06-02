@@ -82,8 +82,8 @@ export default function Products() {
   });
 
   const { data: samples = [], isLoading, isError: isSamplesError } = useQuery({
-    queryKey: ['samples', selectedTypeId],
-    queryFn: () => samplesService.getAll(selectedTypeId),
+    queryKey: ['samples', 'products'],
+    queryFn: () => samplesService.getAll(),
   });
 
   const displayProductTypes = productTypes;
@@ -108,6 +108,9 @@ export default function Products() {
   }, [displaySamples, query, selectedTypeId]);
 
   const activeType = displayProductTypes.find((type) => type.id === selectedTypeId);
+  const selectType = (typeId: number | undefined) => {
+    setSelectedTypeId((currentTypeId) => (currentTypeId === typeId ? currentTypeId : typeId));
+  };
 
   return (
     <>
@@ -130,7 +133,7 @@ export default function Products() {
                 <Grid3X3 className="w-3.5 h-3.5" />
                 Catalog sản phẩm
               </Badge>
-              <h1 className="mt-5 max-w-3xl font-black text-[#9f1239] text-4xl md:text-6xl leading-tight">
+              <h1 className="display-heading mt-5 max-w-3xl font-black text-[#9f1239] text-4xl md:text-6xl">
                 Lọc mẫu theo hiệu ứng, màu sắc và cảm giác 3D.
               </h1>
               <p className="mt-4 max-w-2xl text-[#7f1d3a] text-base leading-7">
@@ -187,13 +190,13 @@ export default function Products() {
                 <RotatingStandee
                   src="/img/standee2.png"
                   alt="Mẫu standee nhân vật thứ hai"
-                  className="bottom-[58px] sm:bottom-[62px] left-[4%] sm:left-[3%] w-[206px] sm:w-[244px] h-[280px] sm:h-[330px]"
+                  className="bottom-[74px] left-[-8%] h-[240px] w-[170px] sm:bottom-[62px] sm:left-[3%] sm:h-[330px] sm:w-[244px]"
                   animationDelay="-1.875s"
                 />
                 <RotatingStandee
                   src="/img/standee.png"
                   alt="Mẫu standee nhân vật xoay"
-                  className="right-[4%] sm:right-[3%] bottom-[58px] sm:bottom-[62px] w-[206px] sm:w-[244px] h-[280px] sm:h-[330px]"
+                  className="bottom-[74px] right-[-8%] h-[240px] w-[170px] sm:bottom-[62px] sm:right-[3%] sm:h-[330px] sm:w-[244px]"
                 />
 
                 <div className="top-5 left-3 absolute bg-white/92 shadow-[12px_12px_0_rgba(253,20,63,0.08)] backdrop-blur px-4 py-3 border border-primary/10 rounded-2xl">
@@ -239,19 +242,21 @@ export default function Products() {
                 <p className="font-bold text-[#7f1d3a] text-sm">Danh mục</p>
                 <div className="gap-2 grid mt-2">
                   <Button
+                    type="button"
                     variant={!selectedTypeId ? 'default' : 'outline'}
                     className="justify-start rounded-xl"
-                    onClick={() => setSelectedTypeId(undefined)}
+                    onClick={() => selectType(undefined)}
                   >
                     <Filter className="w-4 h-4" />
-                    Tất cả mẫu
+                    Tất cả sản phẩm
                   </Button>
                   {displayProductTypes.map((pt) => (
                     <Button
                       key={pt.id}
+                      type="button"
                       variant={selectedTypeId === pt.id ? 'default' : 'outline'}
                       className="justify-start bg-white hover:bg-primary/5 border-primary/15 rounded-xl text-[#7f1d3a] hover:text-primary"
-                      onClick={() => setSelectedTypeId(pt.id)}
+                      onClick={() => selectType(pt.id)}
                     >
                       {pt.name}
                     </Button>

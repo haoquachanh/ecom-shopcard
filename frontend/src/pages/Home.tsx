@@ -193,7 +193,7 @@ export default function Home() {
 
             <div className="space-y-5">
               <p className="text-xs font-black uppercase tracking-[0.32em] text-primary">{SHOP_SHORT_NAME}</p>
-              <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-[#9f1239] md:text-7xl">
+              <h1 className="display-heading max-w-4xl text-4xl font-black text-[#9f1239] md:text-6xl xl:text-[4.25rem]">
                 In ảnh nổi 3D lenticular, nhìn nghiêng là thấy chuyển động.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-[#7f1d3a] md:text-lg">
@@ -306,7 +306,7 @@ export default function Home() {
             <Badge className="rounded-full bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/10">
               Dịch vụ chính
             </Badge>
-            <h2 className="mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Thiết kế và in lenticular cho sản phẩm cần tạo ấn tượng.</h2>
+            <h2 className="display-heading mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Thiết kế và in lenticular cho sản phẩm cần tạo ấn tượng.</h2>
             <p className="mt-3 text-sm leading-7 text-[#7f1d3a]/75 md:text-base">
               Lenti Lab tập trung vào ảnh nổi 3D, standee mica, vật phẩm trưng bày và POSM có hiệu ứng thị giác rõ khi người xem thay đổi góc nhìn.
             </p>
@@ -348,7 +348,7 @@ export default function Home() {
             <Badge className="rounded-full bg-white/16 px-3 py-1.5 text-white hover:bg-white/16">
               Quy trình
             </Badge>
-            <h2 className="mt-5 text-3xl font-black tracking-normal md:text-5xl">Từ ảnh phẳng đến mẫu có chiều sâu.</h2>
+            <h2 className="display-heading mt-5 text-3xl font-black md:text-5xl">Từ ảnh phẳng đến mẫu có chiều sâu.</h2>
             <p className="mt-4 text-base leading-7 text-white/86">Mỗi bước đều giúp hiệu ứng dễ nhìn hơn khi chuyển góc.</p>
           </div>
 
@@ -374,7 +374,7 @@ export default function Home() {
                 <Badge className="rounded-full bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/10">
                   Mẫu nổi bật
                 </Badge>
-                <h2 className="mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Một vài mẫu để bắt đầu.</h2>
+                <h2 className="display-heading mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Một vài mẫu để bắt đầu.</h2>
               </div>
               <Button variant="outline" className="rounded-xl border-primary/20 bg-white text-primary hover:bg-primary/5" asChild>
                 <Link to="/products">
@@ -412,7 +412,7 @@ export default function Home() {
             <Badge className="rounded-full bg-primary/10 px-3 py-1.5 text-primary hover:bg-primary/10">
               Câu hỏi thường gặp
             </Badge>
-            <h2 className="mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Thông tin cần biết trước khi in ảnh nổi 3D.</h2>
+            <h2 className="display-heading mt-4 text-3xl font-black text-[#be123c] md:text-5xl">Thông tin cần biết trước khi in ảnh nổi 3D.</h2>
             <p className="mt-3 text-sm leading-7 text-[#7f1d3a]/75 md:text-base">
               Những câu hỏi này giúp bạn chọn đúng hiệu ứng lenticular, chuẩn bị file ảnh và ước lượng hướng sản xuất trước khi trao đổi chi tiết.
             </p>
@@ -433,7 +433,7 @@ export default function Home() {
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.28em] text-white/75">Bắt đầu nhanh</p>
-              <h2 className="mt-3 text-3xl font-black md:text-5xl">Có ảnh hoặc ý tưởng rồi? Gửi để được gợi ý hiệu ứng.</h2>
+              <h2 className="display-heading mt-3 text-3xl font-black md:text-5xl">Có ảnh hoặc ý tưởng rồi? Gửi để được gợi ý hiệu ứng.</h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-white/86">Chọn mẫu tham khảo hoặc gửi hình qua Zalo, Lenti Lab sẽ tư vấn hướng flip, depth hoặc motion phù hợp.</p>
             </div>
             <div className="flex flex-wrap gap-3">

@@ -28,7 +28,7 @@ export default function Loved() {
                 <Heart className="h-3.5 w-3.5" />
                 Loved
               </Badge>
-              <h1 className="mt-5 text-4xl font-black tracking-normal text-[#9f1239] md:text-6xl">Bộ sưu tập yêu thích.</h1>
+              <h1 className="display-heading mt-5 text-4xl font-black text-[#9f1239] md:text-6xl">Bộ sưu tập yêu thích.</h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-[#7f1d3a]">
                 Lưu những mẫu có hiệu ứng, màu sắc và cảm giác 3D phù hợp để quay lại tham khảo nhanh hơn.
               </p>

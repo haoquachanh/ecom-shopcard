@@ -166,7 +166,7 @@ export default function ProductDetail() {
                 <Sparkles className="w-3.5 h-3.5" />
                 {sample.productType?.name || 'Lenti Lab'}
               </Badge>
-              <h1 className="mt-5 font-black text-[#9f1239] text-4xl md:text-6xl leading-tight">{sample.name}</h1>
+              <h1 className="display-heading mt-5 font-black text-[#9f1239] text-4xl md:text-6xl">{sample.name}</h1>
               {sample.description && (
                 <p className="mt-5 max-w-2xl text-[#7f1d3a]/78 text-base leading-8">{sample.description}</p>
               )}
