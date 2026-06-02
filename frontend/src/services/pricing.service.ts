@@ -21,15 +21,37 @@ export interface BasePriceConfig {
   effect: PricingOption | null;
   unitPrice: number;
   quantityTiers: QuantityTier[];
+  extraCharges: ExtraChargeOption[];
+}
+
+export interface ExtraChargeOption {
+  id: number;
+  name: string;
+  chargeType: 'free' | 'per_unit' | 'fixed_total';
+  priceVnd: number;
+  isPerItem: boolean;
 }
 
 type PriceTableLayoutMetadata = {
+  layoutVersion?: number;
   rowFactorId?: number;
   columnFactorId?: number | null;
+  groupFactorId?: number | null;
+  selectedRowValueIds?: number[];
+  selectedColumnValueIds?: number[];
+  selectedGroupValueIds?: number[];
+  informationalFactorValueIds?: number[];
+  informationalFactorAdjustments?: Array<{
+    factorValueId: number;
+    pricingMode: 'free' | 'per_unit' | 'fixed_total';
+    amountVnd?: number | null;
+    label?: string | null;
+  }>;
   priceColumnLabel?: string;
   quantityColumnLabel?: string;
   unitLabel?: string;
   previewTitle?: string | null;
+  previewSubtitle?: string | null;
 };
 
 type FactorValueRow = {
@@ -54,7 +76,7 @@ type PricingFactorRow = {
   id: number;
   factor_key: string;
   label: string;
-  factor_type: 'select' | 'quantity_range' | 'number_range' | 'boolean' | 'text';
+  factor_type: 'select' | 'quantity_range' | 'quantity_value' | 'number_range' | 'boolean' | 'text';
   unit: string | null;
 };
 
@@ -72,7 +94,7 @@ type PriceRuleConditionRow = {
 type PriceRuleRow = {
   id: number;
   price_vnd: number | string | null;
-  pricing_mode: string;
+  pricing_mode: 'fixed_total' | 'per_unit' | 'quote_required' | string;
 };
 
 type PublicRuleEntry = {
@@ -97,16 +119,26 @@ type ActivePriceTablePayload = {
 };
 
 export type PriceMatrixCell = {
+  groupValueId: number | null;
   rowValueId: number;
   columnValueId: number | null;
   priceVnd: number | null;
+  pricingMode: string;
+};
+
+export type PriceMatrixGroup = {
+  id: number | null;
+  label: string;
+  note?: string | null;
 };
 
 export type PriceMatrix = {
   title: string;
+  subtitle?: string | null;
   quantityLabel: string;
   priceLabel: string;
   unitLabel: string;
+  groups: PriceMatrixGroup[];
   columns: Array<{ id: number | null; label: string }>;
   rows: Array<{
     id: number;
@@ -114,6 +146,7 @@ export type PriceMatrix = {
     rangeLabel: string;
     cells: PriceMatrixCell[];
   }>;
+  extraCharges: ExtraChargeOption[];
   notes?: string | null;
 };
 
@@ -135,6 +168,33 @@ function formatRange(value: FactorValueRow) {
   return value.label;
 }
 
+function buildExtraCharges(metadata: PriceTableLayoutMetadata, factors: PublicFactorEntry[]): ExtraChargeOption[] {
+  const selectedIds = new Set((metadata.informationalFactorValueIds ?? []).map(Number));
+  const adjustments = new Map((metadata.informationalFactorAdjustments ?? []).map((item) => [Number(item.factorValueId), item]));
+
+  return factors
+    .flatMap((entry) => entry.values)
+    .filter((value) => selectedIds.has(Number(value.id)))
+    .map((value) => {
+      const adjustment = adjustments.get(Number(value.id));
+      const chargeType = adjustment?.pricingMode ?? 'free';
+      const priceVnd = chargeType === 'free' ? 0 : Number(adjustment?.amountVnd ?? 0);
+      return {
+        id: Number(value.id),
+        name: adjustment?.label?.trim() || String(value.metadata?.displayNote || value.label),
+        chargeType,
+        priceVnd,
+        isPerItem: chargeType === 'per_unit',
+      };
+    });
+}
+
+function pickValues(values: FactorValueRow[], selectedIds?: number[]) {
+  if (!selectedIds?.length) return values;
+  const valueById = new Map(values.map((value) => [Number(value.id), value]));
+  return selectedIds.map((id) => valueById.get(Number(id))).filter(Boolean) as FactorValueRow[];
+}
+
 function buildMatrix(payload: ActivePriceTablePayload): PriceMatrix | null {
   const table = payload.priceTable;
   const factors = payload.factors ?? [];
@@ -142,53 +202,77 @@ function buildMatrix(payload: ActivePriceTablePayload): PriceMatrix | null {
   if (!table) return null;
 
   const metadata = table.metadata ?? {};
+  const extraCharges = buildExtraCharges(metadata, factors);
   const rowFactor =
-    factors.find((entry) => entry.productTypeFactor.id === metadata.rowFactorId) ??
-    factors.find((entry) => entry.factor.factor_key === 'quantity' || entry.factor.factor_type === 'quantity_range');
+    factors.find((entry) => Number(entry.productTypeFactor.id) === Number(metadata.rowFactorId)) ??
+    factors.find((entry) => entry.factor.factor_key === 'quantity' || entry.factor.factor_type === 'quantity_range' || entry.factor.factor_type === 'quantity_value');
   if (!rowFactor) return null;
 
+  const hasColumnMetadata = Object.prototype.hasOwnProperty.call(metadata, 'columnFactorId');
   const columnFactor = metadata.columnFactorId
-    ? factors.find((entry) => entry.productTypeFactor.id === metadata.columnFactorId)
-    : factors.find((entry) => entry.productTypeFactor.id !== rowFactor.productTypeFactor.id);
+    ? factors.find((entry) => Number(entry.productTypeFactor.id) === Number(metadata.columnFactorId))
+    : hasColumnMetadata
+      ? null
+      : factors.find((entry) => Number(entry.productTypeFactor.id) !== Number(rowFactor.productTypeFactor.id));
+
+  const rowValues = pickValues(rowFactor.values, metadata.selectedRowValueIds);
+  const columnValues = columnFactor ? pickValues(columnFactor.values, metadata.selectedColumnValueIds) : [];
+  const groupFactor = metadata.groupFactorId
+    ? factors.find((entry) => Number(entry.productTypeFactor.id) === Number(metadata.groupFactorId))
+    : null;
+  const groupValues = groupFactor ? pickValues(groupFactor.values, metadata.selectedGroupValueIds) : [];
 
   const columns = columnFactor
-    ? columnFactor.values.map((value) => ({ id: value.id, label: value.label }))
+    ? columnValues.map((value) => ({ id: value.id, label: value.label }))
     : [{ id: null, label: metadata.priceColumnLabel || 'Giá' }];
+  const groups = groupFactor
+    ? groupValues.map((value) => ({ id: value.id, label: value.label, note: typeof value.metadata?.displayNote === 'string' ? value.metadata.displayNote : null }))
+    : [{ id: null, label: table.name, note: null }];
 
-  const rows = rowFactor.values.map((rowValue) => ({
+  const rows = rowValues.map((rowValue) => ({
     id: rowValue.id,
     label: rowValue.label,
     rangeLabel: formatRange(rowValue),
-    cells: columns.map((column) => {
+    cells: groups.flatMap((group) => columns.map((column) => {
       const matched = rules.find((entry) => {
         const hasRow = entry.conditions.some(
           (condition) =>
-            condition.product_type_factor_id === rowFactor.productTypeFactor.id &&
-            condition.factor_value_id === rowValue.id,
+            Number(condition.product_type_factor_id) === Number(rowFactor.productTypeFactor.id) &&
+            Number(condition.factor_value_id) === Number(rowValue.id),
         );
         const hasColumn = column.id == null || entry.conditions.some(
           (condition) =>
-            condition.product_type_factor_id === columnFactor?.productTypeFactor.id &&
-            condition.factor_value_id === column.id,
+            Number(condition.product_type_factor_id) === Number(columnFactor?.productTypeFactor.id) &&
+            Number(condition.factor_value_id) === Number(column.id),
         );
-        return hasRow && hasColumn;
+        const hasGroup = !groupFactor || entry.conditions.some(
+          (condition) =>
+            Number(condition.product_type_factor_id) === Number(groupFactor.productTypeFactor.id) &&
+            Number(condition.factor_value_id) === Number(group.id),
+        );
+        return hasRow && hasColumn && hasGroup;
       });
 
       return {
+        groupValueId: group.id,
         rowValueId: rowValue.id,
         columnValueId: column.id,
         priceVnd: matched?.rule.price_vnd == null ? null : Number(matched.rule.price_vnd),
+        pricingMode: matched?.rule.pricing_mode ?? 'per_unit',
       };
-    }),
+    })),
   }));
 
   return {
     title: metadata.previewTitle || table.name,
+    subtitle: metadata.previewSubtitle ?? 'Không giới hạn mẫu',
     quantityLabel: metadata.quantityColumnLabel || rowFactor.factor.label || 'Số lượng',
     priceLabel: metadata.priceColumnLabel || 'Giá',
     unitLabel: metadata.unitLabel || 'c',
+    groups,
     columns,
     rows,
+    extraCharges,
     notes: table.notes,
   };
 }
@@ -211,10 +295,20 @@ export function unitPriceForQuantity(config: BasePriceConfig | undefined, quanti
   return tier?.pricePerUnit ?? config.unitPrice;
 }
 
+export function extraChargesForSelection(config: BasePriceConfig | undefined, quantity: number, selectedExtraId?: number | null) {
+  if (!config || !selectedExtraId) return [];
+  return config.extraCharges
+    .filter((charge) => charge.id === selectedExtraId && charge.priceVnd > 0)
+    .map((charge) => ({
+      ...charge,
+      total: charge.isPerItem ? charge.priceVnd * quantity : charge.priceVnd,
+    }));
+}
+
 export const pricingService = {
   async getActivePriceTable(productTypeSlug: string): Promise<ActivePriceTable | null> {
     const supabase = getSupabaseClient();
-    const getActivePriceTable = supabase.rpc as unknown as (
+    const getActivePriceTable = supabase.rpc.bind(supabase) as unknown as (
       fn: 'get_active_price_table',
       args: { product_type_slug: string },
     ) => Promise<{ data: unknown; error: Error | null }>;
@@ -258,6 +352,7 @@ export const pricingService = {
       side: { id: 1, name: 'Mặc định' },
       effect: null,
       unitPrice: matrix.rows[0]?.cells[index]?.priceVnd ?? 0,
+      extraCharges: matrix.extraCharges,
       quantityTiers: matrix.rows.map((row) => ({
         id: row.id,
         minQuantity: Number(row.rangeLabel.match(/\d+/)?.[0] ?? 1),
@@ -273,7 +368,7 @@ export const pricingService = {
       materials: unique(configs.map((item) => item.material)),
       sizes: unique(configs.map((item) => item.size)),
       sides: unique(configs.map((item) => item.side)),
-      effects: unique(configs.map((item) => item.effect).filter(Boolean) as PricingOption[]),
+      effects: unique(configs.flatMap((item) => item.extraCharges.map((charge) => ({ id: charge.id, name: charge.name })))),
     };
   },
 

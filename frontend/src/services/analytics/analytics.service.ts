@@ -38,7 +38,7 @@ export const analyticsService = {
 
     try {
       const supabase = getSupabaseClient();
-      const trackPageView = supabase.rpc as unknown as (
+      const trackPageView = supabase.rpc.bind(supabase) as unknown as (
         fn: 'track_page_view',
         args: {
           p_visitor_id: string;

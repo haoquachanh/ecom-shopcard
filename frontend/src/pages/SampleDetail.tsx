@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatVND } from '@/lib/utils';
 import { SHOP_ZALO_HREF } from '@/lib/site';
 import { MessageCircle, Minus, Plus } from 'lucide-react';
-import { pricingService, unitPriceForQuantity } from '@/services/pricing.service';
+import { extraChargesForSelection, pricingService, unitPriceForQuantity } from '@/services/pricing.service';
 import { samplesService } from '@/services/products.service';
 
 export default function SampleDetail() {
@@ -58,7 +58,9 @@ export default function SampleDetail() {
   );
 
   const unitPrice = unitPriceForQuantity(activePrice, quantity);
-  const subtotal = unitPrice * quantity;
+  const selectedExtraCharges = extraChargesForSelection(activePrice, quantity, selectedEffectId);
+  const extraTotal = selectedExtraCharges.reduce((sum, charge) => sum + charge.total, 0);
+  const subtotal = unitPrice * quantity + extraTotal;
 
   if (isLoading) return (
     <div className="mx-auto px-4 py-10 container">
@@ -204,6 +206,12 @@ export default function SampleDetail() {
                 <span className="text-muted-foreground">Đơn giá</span>
                 <span>{unitPrice > 0 ? formatVND(unitPrice) : '--'} × {quantity}</span>
               </div>
+              {selectedExtraCharges.map((charge) => (
+                <div key={charge.id} className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{charge.name}</span>
+                  <span>{formatVND(charge.priceVnd)}{charge.isPerItem ? ` × ${quantity}` : ''}</span>
+                </div>
+              ))}
               <div className="flex justify-between pt-2 border-t font-bold text-lg">
                 <span>Tổng cộng</span>
                 <span className="text-primary">{subtotal > 0 ? formatVND(subtotal) : '--'}</span>
